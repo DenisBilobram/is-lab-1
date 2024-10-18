@@ -1,0 +1,103 @@
+.auth-form-container {
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+
+    .auth-form {
+        width: 30%;
+        background: #1f1f1f;
+        border-radius: 15px;
+        padding: 30px;
+        min-width: 300px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .login-container {
+            margin: 10px 0 40px 0;
+            color: #ffffff;
+            letter-spacing: 2px;
+            font-size: larger;
+        }
+
+        .authForm {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 90%;
+
+            .form-error {
+                display: flex;
+                color: rgb(252, 53, 53);
+                height: 18px;
+                justify-content: center;
+                text-align: center;
+                white-space: nowrap;
+            }
+
+            .lablel-input {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: large;
+                width: 100%;
+                input {
+                    width: 165px;
+                    padding: 4px;
+                    margin: 8px 0;
+                    border: none;
+                    border-radius: 10px;
+                    font-size: medium;
+                }
+            }
+            .auth-button {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 30px;
+                margin-top: 10px;
+                border: none;
+                border-radius: 10px;
+                background-color: #333333;
+                color: #ffffff;
+                cursor: pointer;
+                transition: 0.3s;
+                box-shadow: 0px 5px 20px rgba(122, 122, 122, 0.5);
+                font-size: medium;
+                letter-spacing: 1.5px;
+                &:hover {
+                    background-color: rgba(177, 3, 40, 0.911)  ;
+                    box-shadow: 0px 5px 20px rgba(177, 3, 40, 0.911);
+                }
+                &:active {
+                    opacity: 0.5;
+                }
+            }
+            .forgot-password-container {
+                display: flex;
+                width: 100%;
+                height: 50px;
+                .forgot-password {
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    letter-spacing: 1px;
+                    transition: 0.3s;
+                    cursor: pointer;
+                    &:hover {
+                        color: rgba(226, 1, 50, 0.911);
+                    }
+                }
+            }
+        }
+
+        .submit-errors {
+            display: flex;
+            color: rgb(252, 53, 53);
+            justify-content: center;
+            text-align: center;
+        }
+    }
+}

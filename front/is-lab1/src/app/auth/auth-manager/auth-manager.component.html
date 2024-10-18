@@ -1,0 +1,76 @@
+<div class="auth-form-container">
+    <div class="auth-form">
+        <div class="login-container">Authorization</div>
+        @if (!isRegister) {
+            <form [formGroup]="authform" (ngSubmit)="onLoginSubmit()" class="authForm">
+                <div class="lablel-input">
+                    <label for="username">Username</label>
+                    <input id="name" formControlName="username" />
+                </div>
+                
+                @if (authform.get('username')?.invalid && authform.get('username')?.touched) {
+                    <div class="form-error"><i>Username must be at least 6 characters.</i></div>
+                } @else {
+                    <div class="form-error"></div>
+                }   
+                <div class="lablel-input">
+                    <label for="password">Password</label>
+                    <input id="password" type="password" formControlName="password" />
+                </div>
+                @if (authform.get('password')?.invalid && authform.get('password')?.touched) {
+                    <div class="form-error"><i>Password must be at least 6 characters.</i></div>
+                } @else {
+                    <div class="form-error"></div>
+                }
+            
+                <button type="submit" [disabled]="authform.invalid" class="auth-button">Login</button>
+
+                <button class="auth-button" (click)="isRegister = true">Sign up</button>
+
+                <div class="forgot-password-container">
+                    <div class="forgot-password"><i><u><a [routerLink]="['password']">Forgot password?</a></u></i></div>
+                </div>
+            </form>
+        } @else {
+            <form [formGroup]="registrForm" (ngSubmit)="onRegisterSubmit()" class="authForm">
+                <div class="lablel-input">
+                    <label for="username">Username</label>
+                    <input id="name" formControlName="username" />
+                </div>
+                
+                @if (registrForm.get('username')?.invalid && registrForm.get('username')?.touched) {
+                    <div class="form-error"><i>Username must be at least 6 characters.</i></div>
+                } @else {
+                    <div class="form-error"></div>
+                }   
+                <div class="lablel-input">
+                    <label for="password">Password</label>
+                    <input id="password" type="password" formControlName="password" />
+                </div>
+                @if (registrForm.get('password')?.invalid && registrForm.get('password')?.touched) {
+                    <div class="form-error"><i>Password must be at least 6 characters.</i></div>
+                } @else {
+                    <div class="form-error"></div>
+                }
+
+                <div class="lablel-input">
+                    <label for="username">Email</label>
+                    <input id="email" formControlName="email" />
+                </div>
+                
+                @if (registrForm.get('email')?.invalid && registrForm.get('username')?.touched) {
+                    <div class="form-error"><i>It must be email.</i></div>
+                } @else {
+                    <div class="form-error"></div>
+                }   
+
+                <button type="submit" class="auth-button">Sign up</button>
+
+                <button class="auth-button" (click)="isRegister = false">Back to Login</button>
+            </form>
+        }
+        <div class="submit-errors">
+            <p>{{ errorMessage }}</p>
+        </div>
+    </div>
+</div>
