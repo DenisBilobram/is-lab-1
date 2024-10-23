@@ -1,0 +1,36 @@
+@if (object) {
+    <div class="object-container">
+        <a class="object-link" routerLink="edit/{{ entityType }}/{{ object.id }}">
+            @if (entityType == 'human-being') {
+                <div class="columns-container">
+                    <div class="object-column">{{ humanBeing?.id }}</div>
+                    <div class="object-column">{{ humanBeing?.name }}</div>
+                    <div class="object-column">{{ humanBeing?.coordinates }}</div>
+                    <div class="object-column spaced-column">{{ humanBeing?.creationDate }}</div>
+                    <div class="object-column">{{ humanBeing?.realHero }}</div>
+                    <div class="object-column">{{ humanBeing?.hasToothpick }}</div>
+                    <div class="object-column">{{ humanBeing?.car }}</div>
+                    <div class="object-column little-text">{{ humanBeing?.mood }}</div>
+                    <div class="object-column">{{ humanBeing?.impactSpeed }}</div>
+                    <div class="object-column">{{ humanBeing?.soundtrackName }}</div>
+                    <div class="object-column little-text">{{ humanBeing?.weaponType }}</div>
+                    <div class="object-column spaced-column">{{ humanBeing?.isUser }}</div>
+                </div>
+            } @else if (entityType == 'car') {
+                <div class="columns-container">
+                    <div class="object-column">{{ car?.id }}</div>
+                    <div class="object-column">{{ car?.name }}</div>
+                    <div class="object-column">{{ car?.cool }}</div>
+                    <div class="object-column spaced-column">{{ car?.isUser }}</div>
+                </div>
+            } @else if (entityType == 'coordinates') {
+                <div class="columns-container">
+                    <div class="object-column">{{ coordinates?.id }}</div>
+                    <div class="object-column">{{ coordinates?.x }}</div>
+                    <div class="object-column">{{ coordinates?.y }}</div>
+                    <div class="object-column spaced-column">{{ coordinates?.isUser }}</div>
+                </div>
+            }
+        </a>
+    </div>
+}

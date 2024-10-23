@@ -3,6 +3,7 @@ package is.lab1.is_lab1.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -38,7 +39,12 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.configurationSource(configurationSource))
             .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests.requestMatchers("/api/main", "api/auth/status").authenticated().anyRequest().permitAll())
+            .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests.requestMatchers("/error").permitAll()
+                                    // .requestMatchers("/api/objects/human-being/subscribe").permitAll()
+                                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                                    .requestMatchers("/api/auth/**").permitAll()
+                                    .requestMatchers("/api/objects/**").authenticated()
+                                    .anyRequest().permitAll())
             .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint((request, response, authExp) -> response.sendError(401, "User is not unthenicated.")))
             .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
@@ -54,8 +60,4 @@ public class SecurityConfig {
         return new ProviderManager(authenticationProvider);
 
     }
-
-    
-
-
 }

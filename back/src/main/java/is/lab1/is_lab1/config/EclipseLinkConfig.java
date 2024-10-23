@@ -25,7 +25,7 @@ public class EclipseLinkConfig {
         emf.setJpaVendorAdapter(new EclipseLinkJpaVendorAdapter());
 
         emf.getJpaPropertyMap().put("eclipselink.weaving", "false");
-        emf.getJpaPropertyMap().put("eclipselink.logging.level", "FINE");
+        emf.getJpaPropertyMap().put("eclipselink.logging.level", "SEVERE");
         emf.getJpaPropertyMap().put("eclipselink.ddl-generation", "create-or-extend-tables");
 
         return emf;

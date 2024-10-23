@@ -1,2 +1,210 @@
 
-OBJECTS
+<div class="objects-manager-container">
+    <div class="objects-manager">
+      <div class="objects-type-container">
+        <button
+          class="objects-type-choice"
+          id="objects-type-left"
+          (click)="onEntityChange('human-being')"
+          [ngClass]="{'active': selectedEntity === 'human-being'}"
+        >
+          HumanBeing
+        </button>
+        <button
+          class="objects-type-choice"
+          id="objects-type-middle"
+          (click)="onEntityChange('car')"
+          [ngClass]="{'active': selectedEntity === 'car'}"
+        >
+          Car
+        </button>
+        <button
+          class="objects-type-choice"
+          id="objects-type-right"
+          (click)="onEntityChange('coordinates')"
+          [ngClass]="{'active': selectedEntity === 'coordinates'}"
+        >
+          Coordinates
+        </button>
+      </div>
+    </div>
+  
+    <div class="objects-container">
+      <ng-container *ngIf="selectedEntity === 'human-being'">
+        <div class="columns-container">
+          <div class="object-columns">
+            <div class="object-column" (click)="sortKey = 'id'; sortBy()">Id</div>
+            <div class="object-column" (click)="sortKey = 'name'; sortBy()">Name</div>
+            <div class="object-column" (click)="sortKey = 'coordinates'; sortBy()">Coord Id</div>
+            <div class="object-column spaced-column" (click)="sortKey = 'creationDate'; sortBy()">Date</div>
+            <div class="object-column" (click)="sortKey = 'realHero'; sortBy()">Hero</div>
+            <div class="object-column" (click)="sortKey = 'hasToothpick'; sortBy()">Pick</div>
+            <div class="object-column" (click)="sortKey = 'car'; sortBy()">Car Id</div>
+            <div class="object-column" (click)="sortKey = 'mood'; sortBy()">Mood</div>
+            <div class="object-column" (click)="sortKey = 'impactSpeed'; sortBy()">Speed</div>
+            <div class="object-column" (click)="sortKey = 'soundtrackName'; sortBy()">Track</div>
+            <div class="object-column" (click)="sortKey = 'weaponType'; sortBy()">Weapon</div>
+            <div class="object-column spaced-column" (click)="sortKey = 'isUser'; sortBy()">User</div>
+          </div>
+        </div>
+        <div class="object-list">
+          <app-object-line
+            *ngFor="let object of (humanObjects$ | async) | trackFilter:currentPage:PAGE_SIZE; trackBy: trackBy"
+            [object]="object"
+            [entityType]="selectedEntity"
+          ></app-object-line>
+        </div>
+        <div class="columns-container">
+            <form [formGroup]="filterForm">
+                <div class="object-columns">
+                <!-- Заголовки столбцов с полями фильтрации -->
+                <div class="object-column">
+                    <input type="text" formControlName="id" (input)="updateHumanFilter()"  placeholder="Filter" />
+                </div>
+                <div class="object-column">
+                    <input type="text" formControlName="name" (input)="updateHumanFilter()"  placeholder="Filter"/>
+                </div>
+                <div class="object-column">
+                    <input type="text" formControlName="coordinates" (input)="updateHumanFilter()"  placeholder="Filter" />
+                </div>
+                <div class="object-column spaced-column">
+                    <input type="date" formControlName="creationDate" (input)="updateHumanFilter()"  placeholder="Filter" />
+                </div>
+                <div class="object-column">
+                    <select formControlName="realHero" (change)="updateHumanFilter()">
+                    <option value="">All</option>
+                    <option value="true">true</option>
+                    <option value="false">false</option>
+                    </select>
+                </div>
+                <div class="object-column">
+                    <select formControlName="hasToothpick" (change)="updateHumanFilter()">
+                    <option value="">All</option>
+                    <option value="true">true</option>
+                    <option value="false">false</option>
+                    </select>
+                </div>
+                <div class="object-column">
+                    <input type="text" formControlName="car" (input)="updateHumanFilter()" placeholder="Filter"/>
+                </div>
+                <div class="object-column">
+                    <input type="text" formControlName="mood" (input)="updateHumanFilter()" placeholder="Filter" />
+                </div>
+                <div class="object-column">
+                    <input formControlName="impactSpeed" (input)="updateHumanFilter()" placeholder="Filter"/>
+                </div>
+                <div class="object-column">
+                    <input formControlName="soundtrackName" (input)="updateHumanFilter()" placeholder="Filter"/>
+                </div>
+                <div class="object-column">
+                    <input type="text" formControlName="weaponType" (input)="updateHumanFilter()" placeholder="Filter"/>
+                </div>
+                <div class="object-column spaced-column">
+                    <input type="text" formControlName="isUser" (input)="updateHumanFilter()" placeholder="Filter"/>
+                </div>
+                </div>
+            </form>
+        </div>
+      </ng-container>
+  
+      <ng-container *ngIf="selectedEntity === 'car'">
+        <div class="columns-container">
+          <div class="object-columns">
+            <div class="object-column" (click)="sortKey = 'id'; sortBy()">Id</div>
+            <div class="object-column" (click)="sortKey = 'name'; sortBy()">Name</div>
+            <div class="object-column" (click)="sortKey = 'cool'; sortBy()">Cool</div>
+            <div class="object-column spaced-column" (click)="sortKey = 'isUser'; sortBy()">User</div>
+          </div>
+        </div>
+        <div class="object-list">
+          <app-object-line
+            *ngFor="let object of (carObjects$ | async) | trackFilter:currentPage:PAGE_SIZE; trackBy: trackBy"
+            [object]="object"
+            [entityType]="selectedEntity"
+          ></app-object-line>
+        </div>
+        <div class="columns-container">
+            <form [formGroup]="filterForm">
+                <div class="object-columns">
+                    <div class="object-column">
+                        <input type="text" formControlName="id" (input)="updateCarFilter()"  placeholder="Filter" />
+                    </div>
+    
+                    <div class="object-column">
+                        <input type="text" formControlName="name" (input)="updateCarFilter()"  placeholder="Filter" />
+                    </div>
+    
+                    <div class="object-column">
+                        <select formControlName="cool" (change)="updateCarFilter()">
+                        <option value="">All</option>
+                        <option value="true">true</option>
+                        <option value="false">false</option>
+                        </select>
+                    </div>
+    
+                    <div class="object-column spaced-column">
+                        <input type="text" formControlName="isUser" (input)="updateCarFilter()"  placeholder="Filter" />
+                    </div>
+                </div>
+            </form>
+        </div>
+      </ng-container>
+  
+      <ng-container *ngIf="selectedEntity === 'coordinates'">
+        <div class="columns-container">
+          <div class="object-columns">
+            <div class="object-column" (click)="sortKey = 'id'; sortBy()">Id</div>
+            <div class="object-column" (click)="sortKey = 'x'; sortBy()">X coord</div>
+            <div class="object-column" (click)="sortKey = 'y'; sortBy()">Y coord</div>
+            <div class="object-column spaced-column" (click)="sortKey = 'isUser'; sortBy()">User</div>
+          </div>
+        </div>
+        <div class="object-list">
+          <app-object-line
+            *ngFor="let object of (coordObjects$ | async) | trackFilter:currentPage:PAGE_SIZE; trackBy: trackBy"
+            [object]="object"
+            [entityType]="selectedEntity"
+          ></app-object-line>
+        </div>
+        <div class="columns-container">
+            <form [formGroup]="filterForm">
+                
+            </form>
+        </div>
+        <div class="columns-container">
+            <form [formGroup]="filterForm">
+                <div class="object-columns">
+                    <div class="object-column">
+                        <input type="text" formControlName="id" (input)="updateCoordinatesFilter()"  placeholder="Filter" />
+                    </div>
+    
+                    <div class="object-column">
+                        <input type="text" formControlName="x" (input)="updateCoordinatesFilter()"  placeholder="Filter" />
+                    </div>
+                    
+                    <div class="object-column">
+                        <input type="text" formControlName="y" (input)="updateCoordinatesFilter()"  placeholder="Filter" />
+                    </div>
+    
+                    <div class="object-column spaced-column">
+                        <input type="text" formControlName="isUser" (input)="updateCoordinatesFilter()"  placeholder="Filter" />
+                    </div>
+                </div>
+            </form>
+        </div>
+      </ng-container>
+    </div>
+  
+    <div class="pagination-controls-container">
+      <div class="pagination-controls">
+        <button (click)="prevPage()" [disabled]="currentPage === 0">&lt;</button>
+        <div class="page-number">{{ currentPage + 1 }}</div>
+        <button (click)="nextPage()" [disabled]="!hasMore()">&gt;</button>
+      </div>
+    </div>
+  
+    <div class="create-button-container">
+      <a class="create-button" [routerLink]="['create', selectedEntity]">Create New</a>
+    </div>
+    <div (click)="closeConnection()">CLOSE CONNECT</div>
+</div>

@@ -4,20 +4,25 @@ body {
     display: flex;
     justify-content: center;
     // align-items: center;
-    height: 100vh;
     margin: 0;
     font-family: Arial, sans-serif;
     color: #e0e0e0;
     align-items: stretch;
     font-family: Arial, Helvetica, sans-serif;
+    
+    button {
+        all: unset;
+        text-align: center;
+    }
 }
 
 main {
     width: 60%;
-    min-width: 600px;
+    min-width: 665px;
 }
 
 a {
     text-decoration: none;
     color: inherit;
+    text-align: center;
 }

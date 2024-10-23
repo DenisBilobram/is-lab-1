@@ -1,1 +1,27 @@
-PROFILE
+<div class="profile-container">
+    <div class="profile">
+        <div class="profile-header">Account Data</div>
+        <div class="profile-data">
+            <div class="profile-data-field">
+                <div class="data-field"><i>Username:</i></div>
+                <div class="data-value">{{ username }}</div>
+            </div>
+            <div class="profile-data-field">
+                <div class="data-field"><i>Email:</i></div>
+                <div class="data-value">{{ email }}</div>
+            </div>
+            <div class="profile-data-field">
+                <div class="data-field"><i>Admin Roots:</i></div>
+                <div class="data-value"> {{ isAdmin }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="create-button-container">
+        <button class="create-button" (click)="onAdminRoots()" >Admin roots</button>
+    </div>
+
+    <div class="create-button-container">
+        <a class="create-button" routerLink="/auth/logout">Logout</a>
+    </div>
+</div>

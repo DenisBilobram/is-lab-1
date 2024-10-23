@@ -1,15 +1,19 @@
 package is.lab1.is_lab1.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import is.lab1.is_lab1.service.IsUserDetails;
 import is.lab1.is_lab1.service.IsUserDetailsService;
 import is.lab1.is_lab1.component.JwtUtil;
 import is.lab1.is_lab1.controller.exception.RegistrationFailException;
@@ -46,7 +50,13 @@ public class AuthController {
 
         final String jwt = jwtTokenUtil.generateToken(newUser.getUsername());
 
-        return ResponseEntity.ok(new AuthenticationResponse(jwt, newUser.getUsername(), newUser.getEmail()));
+        ResponseCookie jwtCookie = ResponseCookie.from("JWT-TOKEN", jwt)
+            .path("/")
+            .secure(false)
+            .maxAge(7 * 24 * 60 * 60)
+            .build();
+
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(new AuthenticationResponse(jwt, newUser.getUsername(), newUser.getEmail(), newUser.isAdmin()));
 
     }
 
@@ -59,7 +69,20 @@ public class AuthController {
         
         final String jwt = jwtTokenUtil.generateToken(isUser.getUsername());
 
-        return ResponseEntity.ok(new AuthenticationResponse(jwt, isUser.getUsername(), isUser.getEmail()));
+        ResponseCookie jwtCookie = ResponseCookie.from("JWT-TOKEN", jwt)
+            .path("/")
+            .secure(false)
+            .maxAge(7 * 24 * 60 * 60)
+            .build();
+
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(new AuthenticationResponse(jwt, isUser.getUsername(), isUser.getEmail(), isUser.isAdmin()));
     }
 
+    // @PostMapping("/roots")
+    // public ResponseEntity<?> createRootsRequest(@AuthenticationPrincipal IsUserDetails userDetails) {
+        
+
+
+    // }
+    
 }

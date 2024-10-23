@@ -1,0 +1,80 @@
+:host {
+    width: 100%;
+    
+    .profile-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .profile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 55%;
+            background-color: #2d2d2d;
+            box-shadow: 0 10px 30px rgba(136, 136, 136, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            .profile-header {
+                font-size: 26px;
+                letter-spacing: 2px;
+                margin-bottom: 20px;
+            }
+
+            .profile-data {
+                font-size: 20px;
+                width: 100%;
+
+                .profile-data-field {
+                    display: flex;
+                    flex-direction: row;
+                    margin-bottom: 15px;
+                    padding: 10px;
+                    background-color: rgb(202, 202, 202);
+                    color: black;
+                    border-radius: 10px;
+
+                    .data-field {
+                        width: 150px;
+                        text-wrap: nowrap;
+                    }
+
+                    .data-value {
+                        width: 50px;
+                    }
+                }
+            }
+        }
+
+        .create-button-container {
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            margin-top: 30px;
+            .create-button {
+                width: 25%;
+                padding: 10px;
+                border: none;
+                border-radius: 10px;
+                background-color: #e7e7e7;
+                color: black;
+                cursor: pointer;
+                transition: 0.3s;
+                box-shadow: 0px 5px 20px rgba(122, 122, 122, 0.5);
+                font-size:larger;
+                font-weight: bold;
+                letter-spacing: 1.5px;
+                &:hover {
+                    background-color: rgba(177, 3, 40, 0.911)  ;
+                    box-shadow: 0px 5px 20px rgba(177, 3, 40, 0.911);
+                    color: white;
+                }
+                &:active {
+                    opacity: 0.5;
+                }
+            }
+        }
+    }
+}

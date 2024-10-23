@@ -1,0 +1,44 @@
+.object-container {
+    display: flex;
+    margin-top: 15px;
+    justify-content: center;
+
+    .object-link {
+        cursor: pointer;
+        transition: 0.3s;
+
+        &:hover {
+            background-color: rgba(177, 3, 40, 0.911);
+            box-shadow: 0px 0px 20px rgba(177, 3, 40, 0.911);
+        }
+
+        &:active {
+            opacity: 0.5;
+        }
+
+        .columns-container {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            justify-content: center;
+            .object-column {
+                font-size: medium;
+                border: 1px solid white;
+                padding: 5px;
+                word-wrap: break-word;
+                word-break: break-word;
+                white-space: normal;
+                height: auto;
+                width: 60px;
+                text-align: center;
+            }
+            .spaced-column {
+                width: 70px;
+                font-size: 12px;
+            }
+            .little-text {
+                font-size: 12px;
+            }
+        }
+    }
+}

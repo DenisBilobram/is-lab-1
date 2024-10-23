@@ -7,6 +7,7 @@ import { EmptyComponent } from './auth/empty.component';
 import { logoutGuard } from './auth/logout.guard';
 import { AppComponent } from './app.component';
 import { MainComponent } from './shared/main/main.component';
+import { ObjectsCreatorComponent } from './objects/objects-creator/objects-creator.component';
 
 export const routes: Routes = [
     {
@@ -17,6 +18,7 @@ export const routes: Routes = [
                 path: 'objects',
                 title: 'Main Objects Page',
                 component: ObjectsManagerComponent,
+                children: []
             },
             {
                 path: 'profile',
@@ -24,6 +26,16 @@ export const routes: Routes = [
                 component: ProfileComponent,
             },
         ]
+    },
+    {
+        path: 'objects/create/:entityType',
+        title: 'Object Create Page',
+        component: ObjectsCreatorComponent
+    },
+    {
+        path: 'objects/edit/:entityType/:id',
+        title: 'Object Edit Page',
+        component: ObjectsCreatorComponent
     },
     {
         path: 'auth/login',

@@ -1,7 +1,6 @@
 package is.lab1.is_lab1.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,9 +26,9 @@ public class IsUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         IsUser user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new UsernameNotFoundException("This is no user with this username."));
-     
-        return new User(user.getUsername(), user.getPassword(), user.getGrantedAuthorities());
+            .orElseThrow(() -> new UsernameNotFoundException("No user found with username: " + username));
+
+        return new IsUserDetails(user, user.getGrantedAuthorities());
     }
 
     public IsUser registerUser(AuthenticationRequest registrationRequest) throws RegistrationFailException {
@@ -38,10 +37,7 @@ public class IsUserDetailsService implements UserDetailsService {
             throw new RegistrationFailException("User with this username already exists.");
         }
 
-        if (userRepository.findByPassword(passwordEncoder.encode(registrationRequest.getPassword())).isPresent()) {
-            throw new RegistrationFailException("User with this password already exists.");
-        }
-        if (userRepository.findByPassword(registrationRequest.getEmail()).isPresent()) {
+        if (userRepository.findByEmail(registrationRequest.getEmail()).isPresent()) {
             throw new RegistrationFailException("User with this email already exists.");
         }
 

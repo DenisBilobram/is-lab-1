@@ -41,4 +41,8 @@ public class IsUser {
             .collect(Collectors.toSet());
     }
 
+    public Boolean isAdmin() {
+        return this.roles.contains(Role.ADMIN);
+    }
+
 }

@@ -1,0 +1,223 @@
+<div class="objects-creator-container">
+    <div class="objects-creator-wrapper"> </div>
+    <div class="objects-creator">
+        <div class="object-creator-header">{{ isEditMode ? 'Edit' : 'Create' }} {{ entityType }} object</div>
+        <div class="objects-form-container">
+            @if (objectForm && objectForm != undefined) {
+                @if (entityType == 'human-being') {
+                    <form [formGroup]="objectForm" (ngSubmit)="onSubmit()" class="object-form">
+
+                        <div class="lablel-input">
+                            <label for="username">Username</label>
+                            <input id="name" formControlName="name" />
+                        </div>
+                        
+                        @if (objectForm.get('name')?.invalid && objectForm.get('name')?.touched) {
+                            <div class="form-error"><i>Required field.</i></div>
+                        } @else {
+                            <div class="form-error"></div>
+                        }
+
+                        <div class="lablel-input">
+                            <label for="coordinates">Coords ID</label>
+                            <select formControlName="coordinates" id="coordinates">
+                                <option></option>
+                                @for (coord of coordinatesList; track $index) {
+                                    <option>{{ coord.id }}</option>
+                                }
+                            </select>
+                        </div>
+                        
+                        @if (objectForm.get('coordinates')?.invalid && objectForm.get('coordinates')?.touched) {
+                            <div class="form-error"><i>Required field.</i></div>
+                        } @else {
+                            <div class="form-error"></div>
+                        }
+
+                        <div class="lablel-input">
+                            <label for="realHero">Real Hero</label>
+                            <select formControlName="realHero" id="realHero">
+                                <option>false</option>
+                                <option>true</option>
+                            </select>
+                        </div>
+                        
+                        <div class="lablel-input">
+                            <label for="hasToothpick">Toothpick</label>
+                            <select formControlName="hasToothpick" id="hasToothpick">
+                                <option>false</option>
+                                <option>true</option>
+                            </select>
+                        </div>
+
+                        <div class="lablel-input">
+                            <label for="car">Car ID</label>
+                            <select formControlName="car" id="car">
+                                <option></option>
+                                @for (car of carsList; track $index) {
+                                    <option>{{ car.id }}</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="lablel-input">
+                            <label for="mood">Mood</label>
+                            <select formControlName="mood" id="mood">
+                                <option>SORROW</option>
+                                <option>LONGING</option>
+                                <option>GLOOM</option>
+                                <option>CALM</option>
+                            </select>
+                        </div>
+
+                        @if (objectForm.get('mood')?.invalid && objectForm.get('mood')?.touched) {
+                            <div class="form-error"><i>Required field.</i></div>
+                        } @else {
+                            <div class="form-error"></div>
+                        }
+
+                        <div class="lablel-input">
+                            <label for="impactSpeed">Speed</label>
+                            <input id="impactSpeed" formControlName="impactSpeed" type="number"/>
+                        </div>
+
+                        @if (objectForm.get('impactSpeed')?.invalid && objectForm.get('impactSpeed')?.touched) {
+                            <div class="form-error"><i>Required field.</i></div>
+                        } @else {
+                            <div class="form-error"></div>
+                        }
+
+                        <div class="lablel-input">
+                            <label for="soundtrackName">Track</label>
+                            <input id="soundtrackName" formControlName="soundtrackName" />
+                        </div>
+
+                        @if (objectForm.get('soundtrackName')?.invalid && objectForm.get('soundtrackName')?.touched) {
+                            <div class="form-error"><i>Required field.</i></div>
+                        } @else {
+                            <div class="form-error"></div>
+                        }
+
+                        <div class="lablel-input">
+                            <label for="weaponType">Weapon</label>
+                            <select formControlName="weaponType" id="weaponType">
+                                <option>HAMMER</option>
+                                <option>AXE</option>
+                                <option>PISTOL</option>
+                                <option>SHOTGUN</option>
+                                <option>KNIFE</option>
+                            </select>
+                        </div>
+
+                        @if (objectForm.get('weaponType')?.invalid && objectForm.get('weaponType')?.touched) {
+                            <div class="form-error"><i>Required field.</i></div>
+                        } @else {
+                            <div class="form-error"></div>
+                        }
+
+                        <button type="submit" [disabled]="objectForm.invalid" class="create-button">{{ isEditMode ? 'Update' : 'Create' }}</button>
+                        @if (isEditMode) {
+                            <div class="create-button" (click)="onDeleteObject()">Delete Object</div>
+                        }
+                        
+                    </form>
+                } @else if (entityType == 'car') {
+                    <form [formGroup]="objectForm" (ngSubmit)="onSubmit()" class="object-form">
+
+                        <div class="lablel-input">
+                            <label for="name">Name</label>
+                            <input id="name" formControlName="name"/>
+                        </div>
+
+                        
+                        @if (objectForm.get('name')?.invalid && objectForm.get('name')?.touched) {
+                            <div class="form-error"><i>Required field.</i></div>
+                        } @else {
+                            <div class="form-error"></div>
+                        }
+                        <div class="lablel-input">
+                            <label for="cool">Cool</label>
+                            <select formControlName="cool" id="cool">
+                                <option>false</option>
+                                <option>true</option>
+                            </select>
+                        </div>
+                        
+                        @if (objectForm.get('y')?.invalid && objectForm.get('y')?.touched) {
+                            <div class="form-error"><i>Required field.</i></div>
+                        } @else {
+                            <div class="form-error"></div>
+                        }
+
+                        <button type="submit" [disabled]="objectForm.invalid" class="create-button">{{ isEditMode ? 'Update' : 'Create' }}</button>
+                        @if (isEditMode) {
+                            <div class="create-button" (click)="onDeleteObject()">Delete Object</div>
+                        }
+                        
+                    </form>
+                } @else if (entityType == 'coordinates') {
+                    <form [formGroup]="objectForm" (ngSubmit)="onSubmit()" class="object-form">
+
+                        <div class="lablel-input">
+                            <label for="x-coord">X coord</label>
+                            <input id="x-coord" formControlName="x" />
+                        </div>
+                        
+                        @if (objectForm.get('x')?.invalid && objectForm.get('x')?.touched) {
+                            <div class="form-error"><i>Must be > -420.</i></div>
+                        } @else {
+                            <div class="form-error"></div>
+                        }
+
+                        <div class="lablel-input">
+                            <label for="y-coord">Y coord</label>
+                            <input id="y-coord" formControlName="y"/>
+                        </div>
+                        
+                        @if (objectForm.get('y')?.invalid && objectForm.get('y')?.touched) {
+                            <div class="form-error"><i>Must be > -453.</i></div>
+                        } @else {
+                            <div class="form-error"></div>
+                        }
+
+                        <button type="submit" [disabled]="objectForm.invalid" class="create-button">{{ isEditMode ? 'Update' : 'Create' }}</button>
+                        @if (isEditMode) {
+                            <div class="create-button" (click)="onDeleteObject()">Delete Object</div>
+                        }
+
+                    </form>
+                }
+                <a class="create-button" routerLink="/objects">Back to Obects</a>
+                <div class="submit-errors">
+                    <p>{{ errorMessage }}</p>
+                </div>
+            }
+        </div>
+        <div class="object-history">
+            @if (isEditMode && loadedObject) {
+                <div class="object-creator-header">Object history</div>
+                <div class="objects-container">
+                    <div class="columns-container">
+                        <div class="object-columns" style="margin-top: 0px;">
+                            <div class="object-column">Type</div>
+                            <div class="object-column">Date</div>
+                            <div class="object-column">User</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="objects-container">
+                    @for (objectEvent of loadedObject.objectEvents; track $index) {
+                        <div class="columns-container">
+                            <div class="object-columns">
+                                <div class="object-column">{{ objectEvent.eventType }}</div>
+                                <div class="object-column">{{ objectEvent.timestamp }}</div>
+                                <div class="object-column">{{ objectEvent.isUser }}</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+    <div class="objects-creator-wrapper"> </div>
+</div>

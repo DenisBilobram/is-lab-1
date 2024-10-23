@@ -1,6 +1,10 @@
 <header>
-    <a class="header-section-container" routerLink="/objects">Objects</a>
-    <a class="header-section-container" routerLink="/profile">Operations</a>
-    <a class="header-section-container" routerLink="/profile">Vizualization</a>
-    <a class="header-section-container" routerLink="/profile">Profile</a>
+    <a class="header-section-container" routerLink="/objects" routerLinkActive="active" 
+    [routerLinkActiveOptions]="{ exact: true }">Objects</a>
+    <a class="header-section-container" routerLink="/operations" routerLinkActive="active" 
+    [routerLinkActiveOptions]="{ exact: true }">Operations</a>
+    <a class="header-section-container" routerLink="/vizualization" routerLinkActive="active" 
+    [routerLinkActiveOptions]="{ exact: true }">Vizualization</a>
+    <a class="header-section-container" routerLink="/profile" routerLinkActive="active" 
+    [routerLinkActiveOptions]="{ exact: true }">Profile</a>
 </header>

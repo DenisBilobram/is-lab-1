@@ -10,5 +10,6 @@ public class AuthenticationResponse {
   private final String jwt;
   private final String username;
   private final String email;
+  private final Boolean isAdmin;
 
 }
