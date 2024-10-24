@@ -6,14 +6,13 @@ import { EntityDataMap, EntityType } from './objects-manager/objects-manager.com
 import { Car } from './models/car.model';
 import { HumanBeing } from './models/human-being.model';
 import { Coordinates } from './models/coordinates.model';
-import { SseService } from './sse.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ObjectsService {
 
-  constructor(private http: HttpClient, private sseService: SseService) {}
+  constructor(private http: HttpClient) {}
 
   getObject(type: EntityType, objectId: number): Observable<any> {
     return this.http.get(`${API_URLS.OBJECTS}/${type}/${objectId}`);
@@ -37,10 +36,6 @@ export class ObjectsService {
 
   deleteObject(type: EntityType, objectId: number): Observable<any> {
     return this.http.delete(`${API_URLS.OBJECTS}/${type}/${objectId}`);
-  }
-
-  subscribeToUpdates(type: EntityType): Observable<any> {
-    return this.sseService.getServerSentEvent(`${API_URLS.OBJECTS}/${type}/subscribe`);
   }
 
 }

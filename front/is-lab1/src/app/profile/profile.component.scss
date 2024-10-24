@@ -76,5 +76,16 @@
                 }
             }
         }
+
+        .roots-request-info {
+            margin-top: 20px;
+            height: 10px;
+        }
+        .error {
+            color: rgb(252, 53, 53);
+        }
+        .succes {
+            color: rgb(26, 219, 0);
+        }
     }
 }

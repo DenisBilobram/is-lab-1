@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { SseService } from './sse.service';
+import { WebScoketService } from './web-scoket.service';
 
-describe('SseService', () => {
-  let service: SseService;
+describe('WebScoketService', () => {
+  let service: WebScoketService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(SseService);
+    service = TestBed.inject(WebScoketService);
   });
 
   it('should be created', () => {

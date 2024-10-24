@@ -2,7 +2,6 @@ package is.lab1.is_lab1.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import is.lab1.is_lab1.controller.request.CarDto;
 import is.lab1.is_lab1.controller.request.CoordinatesDto;
@@ -15,7 +14,7 @@ import is.lab1.is_lab1.service.CarService;
 import is.lab1.is_lab1.service.CoordinatesService;
 import is.lab1.is_lab1.service.HumanBeingService;
 import is.lab1.is_lab1.service.IsUserDetails;
-import is.lab1.is_lab1.service.SseService;
+import is.lab1.is_lab1.service.WebSocketService;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 
@@ -25,7 +24,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
@@ -45,7 +43,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 public class ObjectsController {
 
     @Autowired
-    private SseService sseService;
+    private WebSocketService webSocketService;
 
     @Autowired
     private HumanBeingService humanBeingService;
@@ -75,7 +73,7 @@ public class ObjectsController {
         HumanBeingDto object = new HumanBeingDto(humanBeing);
         object.setType(ObjectOperationType.CREATE);
 
-        sseService.notifySubscribers("human-being", object);
+        webSocketService.notifySubscribers("human-being", object);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -115,7 +113,7 @@ public class ObjectsController {
 
         HumanBeingDto object = new HumanBeingDto(humanBeing);
         object.setType(ObjectOperationType.UPDATE);
-        sseService.notifySubscribers("human-being", object);
+        webSocketService.notifySubscribers("human-being", object);
         
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -130,7 +128,7 @@ public class ObjectsController {
         HumanBeingDto object = new HumanBeingDto();
         object.setType(ObjectOperationType.DELETE);
         object.setId(id);
-        sseService.notifySubscribers("human-being", object);
+        webSocketService.notifySubscribers("human-being", object);
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -150,7 +148,7 @@ public class ObjectsController {
         CoordinatesDto object = new CoordinatesDto(coordinates);
         object.setType(ObjectOperationType.CREATE);
 
-        sseService.notifySubscribers("coordinates", object);
+        webSocketService.notifySubscribers("coordinates", object);
         
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -183,7 +181,7 @@ public class ObjectsController {
         CoordinatesDto object = new CoordinatesDto(coordinates);
         object.setType(ObjectOperationType.UPDATE);
 
-        sseService.notifySubscribers("coordinates", object);
+        webSocketService.notifySubscribers("coordinates", object);
         
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -199,7 +197,7 @@ public class ObjectsController {
         object.setType(ObjectOperationType.DELETE);
         object.setId(id);
 
-        sseService.notifySubscribers("coordinates", object);
+        webSocketService.notifySubscribers("coordinates", object);
         
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -220,7 +218,7 @@ public class ObjectsController {
         CarDto object = new CarDto(car);
         object.setType(ObjectOperationType.CREATE);
         
-        sseService.notifySubscribers("car", object);
+        webSocketService.notifySubscribers("car", object);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -255,7 +253,7 @@ public class ObjectsController {
         CarDto object = new CarDto(car);
         object.setType(ObjectOperationType.UPDATE);
         
-        sseService.notifySubscribers("car", object);
+        webSocketService.notifySubscribers("car", object);
         
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -271,24 +269,9 @@ public class ObjectsController {
         object.setType(ObjectOperationType.DELETE);
         object.setId(id);
         
-        sseService.notifySubscribers("car", object);
+        webSocketService.notifySubscribers("car", object);
         
         return ResponseEntity.status(HttpStatus.OK).build();
-    }
-
-    @GetMapping(path = "human-being/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter subscribeHumanBeings() {
-        return sseService.subscribe("human-being");
-    }
-
-    @GetMapping(path = "car/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter subscribeCars() {
-        return sseService.subscribe("car");
-    }
-
-    @GetMapping(path = "coordinates/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter subscribeCoordinates() {
-        return sseService.subscribe("coordinates");
     }
     
 }

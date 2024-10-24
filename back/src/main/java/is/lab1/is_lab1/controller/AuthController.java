@@ -2,6 +2,7 @@ package is.lab1.is_lab1.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,11 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import is.lab1.is_lab1.service.IsUserDetails;
 import is.lab1.is_lab1.service.IsUserDetailsService;
+import is.lab1.is_lab1.service.RootsRequestService;
 import is.lab1.is_lab1.component.JwtUtil;
 import is.lab1.is_lab1.controller.exception.RegistrationFailException;
+import is.lab1.is_lab1.controller.exception.RootsRequestAlreadyExist;
 import is.lab1.is_lab1.controller.request.AuthenticationRequest;
 import is.lab1.is_lab1.controller.request.AuthenticationResponse;
 import is.lab1.is_lab1.model.IsUser;
+import is.lab1.is_lab1.model.RootsRequest;
 import is.lab1.is_lab1.repository.IsUserRepository;
 
 @RestController
@@ -37,6 +41,9 @@ public class AuthController {
 
     @Autowired
     private JwtUtil jwtTokenUtil;
+
+    @Autowired
+    RootsRequestService rootsRequestService;
 
     @PostMapping("status")
     public ResponseEntity<?> status() {
@@ -78,11 +85,15 @@ public class AuthController {
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(new AuthenticationResponse(jwt, isUser.getUsername(), isUser.getEmail(), isUser.isAdmin()));
     }
 
-    // @PostMapping("/roots")
-    // public ResponseEntity<?> createRootsRequest(@AuthenticationPrincipal IsUserDetails userDetails) {
+    @PostMapping("/roots")
+    public ResponseEntity<?> createRootsRequest(@AuthenticationPrincipal IsUserDetails userDetails) throws RootsRequestAlreadyExist {
         
+        RootsRequest rootsRequest = new RootsRequest(userDetails.getIsUser());
 
+        rootsRequestService.create(rootsRequest);
 
-    // }
+        return ResponseEntity.ok(HttpStatus.OK);
+
+    }
     
 }

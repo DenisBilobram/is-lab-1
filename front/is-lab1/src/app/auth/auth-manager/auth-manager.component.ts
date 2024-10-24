@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../auth.service';
+import { error } from 'node:console';
 
 @Component({
   selector: 'app-auth-manager',
@@ -41,7 +42,8 @@ export class AuthManagerComponent {
           this.errorMessage = "";
         },
         error: err => {
-          this.errorMessage = err.error;
+          this.errorMessage = err.error.message;
+          console.log(err)
         }
       });
     } else {
@@ -58,7 +60,7 @@ export class AuthManagerComponent {
           this.errorMessage = "";
         },
         error: err => {
-          this.errorMessage = err.error;
+          this.errorMessage = err.error.message;
         }
       });
     } else {

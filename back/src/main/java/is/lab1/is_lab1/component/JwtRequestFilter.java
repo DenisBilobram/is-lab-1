@@ -10,7 +10,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import is.lab1.is_lab1.service.IsUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -45,7 +44,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             if (cookies != null) {
                 for (Cookie cookie : cookies) {
                     if ("JWT-TOKEN".equals(cookie.getName())) {
-                        System.out.println(cookie.getName() + ": " + cookie.getValue());
                         jwt = cookie.getValue();
                         break;
                     }
@@ -65,7 +63,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-
+            System.out.println("Trying to validate jwt " + jwt);
+            
             if (jwtUtil.validateToken(jwt, userDetails.getUsername())) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                     new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -73,6 +72,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
+            
         }
 
         chain.doFilter(request, response);

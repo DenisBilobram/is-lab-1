@@ -24,4 +24,6 @@
     <div class="create-button-container">
         <a class="create-button" routerLink="/auth/logout">Logout</a>
     </div>
+
+    <div class="roots-request-info" [ngClass]="requestSuccses ? 'succes' : 'error'"><i>{{ requestInfo }}</i></div>
 </div>

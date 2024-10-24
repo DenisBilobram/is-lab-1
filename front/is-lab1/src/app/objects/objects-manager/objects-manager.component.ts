@@ -11,7 +11,7 @@ import { OrderModule, OrderPipe } from 'ngx-order-pipe';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { TrackFilterPipe } from './track-filter.pipe';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { SseService } from '../sse.service';
+import { WebScoketService } from '../web-scoket.service';
 
 export type EntityType = 'human-being' | 'car' | 'coordinates';
 
@@ -38,9 +38,9 @@ export type EntityDataMap = {
   templateUrl: './objects-manager.component.html',
   styleUrls: ['./objects-manager.component.scss']
 })
-export class ObjectsManagerComponent implements OnInit, OnDestroy  {
+export class ObjectsManagerComponent implements OnInit  {
 
-  private sseSubscription?: Subscription;
+  private webScoketSubs?: Subscription;
 
   selectedEntity: EntityType = 'human-being';
 
@@ -65,32 +65,13 @@ export class ObjectsManagerComponent implements OnInit, OnDestroy  {
   constructor(
     private objectsService: ObjectsService,
     private fb: FormBuilder,
-    private sseService: SseService
+    private webScoketService: WebScoketService
   ) {this.filterForm = this.fb.group({})}
 
   ngOnInit(): void {
     this.loadObjects();
     this.initForm();
     this.setupSseSubscription();
-    window.addEventListener('beforeunload', this.onBeforeUnload);
-  }
-
-  onBeforeUnload = () => {
-    if (this.sseSubscription) {
-      this.sseSubscription.unsubscribe();
-    }
-    this.sseService.closeConnection();
-  };
-
-  ngOnDestroy(): void {
-    if (this.sseSubscription) {
-      this.sseSubscription.unsubscribe();
-    }
-    this.sseService.closeConnection();
-
-  }
-  closeConnection() {
-    this.sseService.closeConnection();
   }
 
   private initForm(): void {
@@ -139,15 +120,15 @@ export class ObjectsManagerComponent implements OnInit, OnDestroy  {
       this.initForm();
       this.loadObjects();
 
-      if (this.sseSubscription) {
-        this.sseSubscription.unsubscribe();
+      if (this.webScoketSubs) {
+        this.webScoketSubs.unsubscribe();
       }
       this.setupSseSubscription();
     }
   }
 
   setupSseSubscription(): void {
-    this.sseSubscription = this.objectsService.subscribeToUpdates(this.selectedEntity)
+    this.webScoketSubs = this.webScoketService.subscribe(this.selectedEntity)
       .subscribe({
         next: (object: any) => {
   
@@ -173,8 +154,7 @@ export class ObjectsManagerComponent implements OnInit, OnDestroy  {
           this.updateObjects(currentList);
         },
         error: (error) => {
-          console.error('Ошибка SSE:', error);
-          this.sseService.closeConnection();
+          console.log(error);
         }
       });
   }
