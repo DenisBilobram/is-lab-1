@@ -1,5 +1,7 @@
 package is.lab1.is_lab1.controller;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,8 +25,12 @@ import is.lab1.is_lab1.controller.exception.RootsRequestAlreadyExist;
 import is.lab1.is_lab1.controller.request.AuthenticationRequest;
 import is.lab1.is_lab1.controller.request.AuthenticationResponse;
 import is.lab1.is_lab1.model.IsUser;
+import is.lab1.is_lab1.model.Role;
 import is.lab1.is_lab1.model.RootsRequest;
 import is.lab1.is_lab1.repository.IsUserRepository;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("api/auth")
@@ -95,5 +101,11 @@ public class AuthController {
         return ResponseEntity.ok(HttpStatus.OK);
 
     }
+
+    @GetMapping("/roots")
+    public ResponseEntity<Set<Role>> getRoles(@AuthenticationPrincipal IsUserDetails userDetails) {
+        return new ResponseEntity<>(userDetails.getIsUser().getRoles(), HttpStatus.OK);
+    }
+    
     
 }

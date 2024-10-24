@@ -66,6 +66,7 @@ export class AuthManagerComponent {
     } else {
       console.log('registrForm is invalid');
     }
-
   }
+
+  
 }

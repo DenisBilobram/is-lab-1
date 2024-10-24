@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { error } from 'node:console';
@@ -11,7 +11,7 @@ import { NgClass } from '@angular/common';
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
-export class ProfileComponent {
+export class ProfileComponent implements OnInit {
 
   username: string;
   email: string;
@@ -23,6 +23,15 @@ export class ProfileComponent {
     this.email = localStorage['email'];
     this.username = localStorage['username'];
     this.isAdmin = Boolean(localStorage['isAdmin']);
+  }
+  ngOnInit(): void {
+    this.authServiec.getRoles().subscribe({
+      next: (roles: string[]) => {
+        if (roles.indexOf("ADMIN") != -1) {
+          this.isAdmin = true;
+        }
+      }
+    })
   }
 
   onAdminRoots() {
