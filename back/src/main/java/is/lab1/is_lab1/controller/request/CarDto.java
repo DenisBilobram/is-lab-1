@@ -17,6 +17,7 @@ public class CarDto {
         this.cool = car.getCool();
         this.isUser = car.getIsUser().getUsername();
         this.objectEvents = car.getObjectEvents().stream().map(event -> new ObjectEventDto(event)).toList();
+        this.adminsCanEdit = car.getAdminsCanEdit();
     }
     
     Long id;
@@ -28,6 +29,9 @@ public class CarDto {
     private Boolean cool;
 
     private String isUser;
+
+    @NotNull
+    private Boolean adminsCanEdit;
 
     private List<ObjectEventDto> objectEvents;
 

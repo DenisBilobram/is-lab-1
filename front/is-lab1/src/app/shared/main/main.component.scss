@@ -1,8 +1,15 @@
 .main-container {
     display: flex;
     width: 100%;
-    height: 100vh;
     align-items: center;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    .spacer {
+        display: flex;
+        height: 20px;
+        width: 100px;
+    }
     .main-window-container {
         width: 100%;
         background: #1f1f1f;

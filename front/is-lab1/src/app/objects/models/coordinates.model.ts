@@ -13,6 +13,8 @@ export interface Coordinates {
 
     isUser: string;
 
+    adminsCanEdit: boolean;
+
     track: number;
 
     type: string;

@@ -1,19 +1,10 @@
 package is.lab1.is_lab1.controller.exception;
 
-public class RegistrationFailException extends Exception {
+import lombok.NoArgsConstructor;
 
-    private String message;
-
+@NoArgsConstructor
+public class RegistrationFailException extends IsException {
     public RegistrationFailException(String message) {
-        this.message = message;
+        super(message);
     }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
 }

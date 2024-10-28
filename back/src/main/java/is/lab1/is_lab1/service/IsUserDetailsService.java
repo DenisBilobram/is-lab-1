@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import is.lab1.is_lab1.controller.exception.EmailNotFoundException;
 import is.lab1.is_lab1.controller.exception.RegistrationFailException;
 import is.lab1.is_lab1.controller.request.AuthenticationRequest;
 import is.lab1.is_lab1.model.IsUser;
@@ -25,16 +26,30 @@ public class IsUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        IsUser user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new UsernameNotFoundException("No user found with username: " + username));
+        IsUser user = getByUsername(username);
 
         return new IsUserDetails(user, user.getGrantedAuthorities());
+    }
+
+    public IsUser getByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByUsername(username)
+            .orElseThrow(() -> new UsernameNotFoundException("No user found with username: " + username));
+    }
+
+    public IsUser getByEmail(String email) throws EmailNotFoundException {
+
+        return userRepository.findByEmail(email).orElseThrow(() -> new EmailNotFoundException("No user found with email: " + email));
+
     }
 
     public IsUser registerUser(AuthenticationRequest registrationRequest) throws RegistrationFailException {
 
         if (userRepository.findByUsername(registrationRequest.getUsername()).isPresent()) {
             throw new RegistrationFailException("User with this username already exists.");
+        }
+
+        if (userRepository.findByPassword(passwordEncoder.encode(registrationRequest.getPassword())).isPresent()) {
+            throw new RegistrationFailException("User with this password already exists.");
         }
 
         if (userRepository.findByEmail(registrationRequest.getEmail()).isPresent()) {

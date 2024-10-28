@@ -17,7 +17,7 @@ export interface HumanBeing {
   /**
    * Поле не может быть null
    */
-  coordinates: string;
+  coordinates: number;
 
   /**
    * Поле не может быть null, генерируется автоматически
@@ -60,6 +60,8 @@ export interface HumanBeing {
   weaponType: WeaponType;
 
   isUser: string;
+
+  adminsCanEdit: boolean;
 
   track: number;
 

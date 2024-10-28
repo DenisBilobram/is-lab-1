@@ -22,12 +22,13 @@ import lombok.AccessLevel;
 @Data
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Coordinates {
+public class Coordinates implements Ownable{
 
     public Coordinates(CoordinatesDto dto, IsUser user) {
         this.x = dto.getX();
         this.y = dto.getY();
         this.isUser = user;
+        this.adminsCanEdit = dto.getAdminsCanEdit();
     }
 
     @Id
@@ -45,6 +46,9 @@ public class Coordinates {
     @ManyToOne
     private IsUser isUser;
 
+    @Column(nullable = false)
+    private Boolean adminsCanEdit;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "coordinates_id", referencedColumnName = "id")
     private List<ObjectEvent> objectEvents = new ArrayList<>();
@@ -52,6 +56,11 @@ public class Coordinates {
     public void setDtoData(CoordinatesDto dto) {
         this.x = dto.getX();
         this.y = dto.getY();
+    }
+
+    @Override
+    public Boolean isAdminsCanEdit() {
+        return this.adminsCanEdit;
     }
     
 }

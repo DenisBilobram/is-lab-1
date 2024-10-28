@@ -28,7 +28,7 @@ import is.lab1.is_lab1.controller.request.HumanBeingDto;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(exclude = {"coordinates", "car", "isUser"})
-public class HumanBeing {
+public class HumanBeing implements Ownable {
 
     public HumanBeing(HumanBeingDto dto, IsUser user, Coordinates coords) {
         this.name = dto.getName();
@@ -40,6 +40,7 @@ public class HumanBeing {
         this.soundtrackName = dto.getSoundtrackName();
         this.weaponType = dto.getWeaponType();
         this.isUser = user;
+        this.adminsCanEdit = dto.getAdminsCanEdit();
     }
 
     @Id
@@ -80,6 +81,9 @@ public class HumanBeing {
     @Column(name = "weapon_type", nullable = false)
     private WeaponType weaponType; //Поле не может быть null
 
+    @Column(nullable = false)
+    private Boolean adminsCanEdit;
+
     @ManyToOne
     private IsUser isUser;
 
@@ -101,4 +105,10 @@ public class HumanBeing {
         this.soundtrackName = dto.getSoundtrackName();
         this.weaponType = dto.getWeaponType();
     }
+
+    @Override
+    public Boolean isAdminsCanEdit() {
+        return this.adminsCanEdit;
+    }
+
 }

@@ -53,6 +53,9 @@
             [object]="object"
             [entityType]="selectedEntity"
           ></app-object-line>
+          @if ( lastRequestObjects.length == 0 ) {
+            <div class="empty-request-list"><i>There are no objects for now.</i></div>
+          }
         </div>
         <div class="columns-container">
             <form [formGroup]="filterForm">
@@ -122,6 +125,9 @@
             [object]="object"
             [entityType]="selectedEntity"
           ></app-object-line>
+          @if ( lastRequestObjects.length == 0 ) {
+            <div class="empty-request-list"><i>There are no objects for now.</i></div>
+          }
         </div>
         <div class="columns-container">
             <form [formGroup]="filterForm">
@@ -164,12 +170,10 @@
             *ngFor="let object of (coordObjects$ | async) | trackFilter:currentPage:PAGE_SIZE; trackBy: trackBy"
             [object]="object"
             [entityType]="selectedEntity"
-          ></app-object-line>
-        </div>
-        <div class="columns-container">
-            <form [formGroup]="filterForm">
-                
-            </form>
+            ></app-object-line>
+            @if ( lastRequestObjects.length == 0 ) {
+              <div class="empty-request-list"><i>There are no objects for now.</i></div>
+            }
         </div>
         <div class="columns-container">
             <form [formGroup]="filterForm">

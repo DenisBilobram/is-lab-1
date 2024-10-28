@@ -1,6 +1,8 @@
 package is.lab1.is_lab1.service;
 
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -49,6 +51,7 @@ public class CarService {
 
     }
 
+    @PreAuthorize("@accessService.canAccessCar(#car.id)")
     @Transactional
     public Car updateCar(Car car, IsUser user) {
 
@@ -57,6 +60,7 @@ public class CarService {
 
         car.getObjectEvents().add(event);
 
+        System.out.println("came to save car");
         return carRepository.save(car);
 
     }
@@ -70,15 +74,14 @@ public class CarService {
         }
     }
 
-    public Car getWithAcces(Long id, IsUser user) throws AccessDeniedException {
+    @PreAuthorize("@accessService.canAccessCar(#id)")
+    public Car getWithAcces(Long id) throws AccessDeniedException {
         Car car = carRepository.getReferenceById(id);
-
-        if (!car.getIsUser().equals(user)) throw new AccessDeniedException("No acces to this object.");
 
         return car;
     }
 
-
+    @PreAuthorize("@accessService.canAccessCar(#car.id)")
     @Transactional
     public void delete(Car car) {
 

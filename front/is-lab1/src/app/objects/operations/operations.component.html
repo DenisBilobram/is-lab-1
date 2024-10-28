@@ -1,0 +1,44 @@
+<div class="operations-container">
+    <div class="operation-header">Choose operation:</div>
+    <div class="operations-bar">
+      <div class="operation-container" *ngFor="let operation of operationsList;">
+        <button (click)="setOperation(operation)" class="operation-button" [ngClass]="{'active': selectedOperation === operation}">
+          {{ operation.name }}
+        </button>
+      </div>
+    </div>
+  
+    <ng-container *ngIf="selectedOperation">
+      <div class="operation-description">
+        <div class="description-header">Operation description:</div>
+        <div class="description-text"><u>{{ selectedOperation.description }}</u></div>
+      </div>
+  
+      <form *ngIf="formInputs" [formGroup]="formInputs" (ngSubmit)="selectedOperation.execute()" class="input-form">
+        <div *ngFor="let inputField of selectedOperation.inputs;" class="form-group">
+          <div class="input-header">Enter parameter:</div>
+          <div class="label-input-container">
+            <label for="{{ inputField.name }}">{{ inputField.label }}:</label>
+            <ng-container [ngSwitch]="inputField.type">
+              <select *ngSwitchCase="'select'" id="{{ inputField.name }}" formControlName="{{ inputField.name }}">
+                <option *ngFor="let option of inputField.options" [value]="option">{{ option }}</option>
+              </select>
+              <input *ngSwitchDefault id="{{ inputField.name }}" type="{{ inputField.type }}" formControlName="{{ inputField.name }}" />
+            </ng-container>
+          </div>
+        </div>
+        <button type="submit" class="perform-button" [disabled]="!isValid()">Perform</button>
+      </form>
+  
+      <div class="results-container" *ngIf="result">
+        <div class="results-header">Results: </div>
+        <div class="results-wrapper">
+          <div class="results">
+            <span>></span>
+            <div class="results" [innerHTML]="result"></div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+  

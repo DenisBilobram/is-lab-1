@@ -18,6 +18,7 @@ public class CoordinatesDto {
         this.y = coords.getY();
         this.isUser = coords.getIsUser().getUsername();
         this.objectEvents = coords.getObjectEvents().stream().map(event -> new ObjectEventDto(event)).toList();
+        this.adminsCanEdit = coords.getAdminsCanEdit();
     }
     
     Long id;
@@ -31,6 +32,9 @@ public class CoordinatesDto {
     private float y;
 
     private String isUser;
+
+    @NotNull
+    private Boolean adminsCanEdit;
 
     private List<ObjectEventDto> objectEvents;
 

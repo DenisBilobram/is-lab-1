@@ -10,6 +10,8 @@ import is.lab1.is_lab1.controller.request.ObjectOperationType;
 import is.lab1.is_lab1.model.Car;
 import is.lab1.is_lab1.model.Coordinates;
 import is.lab1.is_lab1.model.HumanBeing;
+import is.lab1.is_lab1.model.Mood;
+import is.lab1.is_lab1.model.WeaponType;
 import is.lab1.is_lab1.service.CarService;
 import is.lab1.is_lab1.service.CoordinatesService;
 import is.lab1.is_lab1.service.HumanBeingService;
@@ -234,9 +236,9 @@ public class ObjectsController {
     }
 
     @GetMapping("car/{id}")
-    public ResponseEntity<CarDto> getCar(@PathVariable Long id, @AuthenticationPrincipal IsUserDetails userDetails) throws AccessDeniedException {
+    public ResponseEntity<CarDto> getCar(@PathVariable Long id) throws AccessDeniedException {
 
-        Car car = carService.getWithAcces(id, userDetails.getIsUser());
+        Car car = carService.getWithAcces(id);
 
         return new ResponseEntity<>(new CarDto(car), HttpStatus.OK);
     }
@@ -245,7 +247,7 @@ public class ObjectsController {
     public ResponseEntity<?> updateCar(@PathVariable Long id, @Valid @RequestBody CarDto carDto,
                                                 @AuthenticationPrincipal IsUserDetails userDetails) throws AccessDeniedException {
         
-        Car car = carService.getWithAcces(id, userDetails.getIsUser());
+        Car car = carService.getWithAcces(id);
 
         car.setDtoData(carDto);
         car = carService.updateCar(car, userDetails.getIsUser());
@@ -261,7 +263,7 @@ public class ObjectsController {
     @DeleteMapping("car/{id}")
     public ResponseEntity<?> deleteCar(@PathVariable Long id, @AuthenticationPrincipal IsUserDetails userDetails) throws AccessDeniedException {
 
-        Car car = carService.getWithAcces(id, userDetails.getIsUser());
+        Car car = carService.getWithAcces(id);
         
         carService.delete(car);
 
@@ -272,6 +274,36 @@ public class ObjectsController {
         webSocketService.notifySubscribers("car", object);
         
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @GetMapping("human-being/count/impact-speed/{impactSpeed}")
+    public ResponseEntity<Long> countByImpactSpeed(@PathVariable int impactSpeed) {
+        long count = humanBeingService.countByImpactSpeed(impactSpeed);
+        return ResponseEntity.ok(count);
+    }
+
+    @GetMapping("human-being/search/name")
+    public ResponseEntity<List<HumanBeingDto>> findByNameContaining(@RequestParam String substring) {
+        List<HumanBeingDto> results = humanBeingService.findByNameContaining(substring).stream().map(HumanBeingDto::new).toList();
+        return ResponseEntity.ok(results);
+    }
+
+    @GetMapping("human-being/search/weapon-type")
+    public ResponseEntity<List<HumanBeingDto>> findByWeaponTypeGreaterThan(@RequestParam WeaponType weaponType) {
+        List<HumanBeingDto> results = humanBeingService.findByWeaponTypeGreaterThan(weaponType).stream().map(HumanBeingDto::new).toList();
+        return ResponseEntity.ok(results);
+    }
+
+    @DeleteMapping("human-being/delete/without-toothpick")
+    public ResponseEntity<?> deleteAllWithoutToothpick() {
+        humanBeingService.deleteAllHeroesWithoutToothpick();
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @PutMapping("human-being/update/mood-sorrow")
+    public ResponseEntity<?> updateMoodForAll() {
+        humanBeingService.updateMoodForAll(Mood.SORROW);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
     
 }

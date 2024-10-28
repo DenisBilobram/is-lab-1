@@ -1,10 +1,13 @@
 package is.lab1.is_lab1.controller.exception;
 
-public class RootsRequestAlreadyExist extends Exception {
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+public class IsException extends Exception {
+    
     private String message;
 
-    public RootsRequestAlreadyExist(String message) {
+    public IsException(String message) {
         this.message = message;
     }
 

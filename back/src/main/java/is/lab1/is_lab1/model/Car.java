@@ -20,12 +20,13 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Car {
+public class Car implements Ownable{
 
     public Car(CarDto car, IsUser user) {
         this.name = car.getName();
         this.cool = car.getCool();
         this.isUser = user;
+        this.adminsCanEdit = car.getAdminsCanEdit();
     }
 
     @Id
@@ -41,6 +42,9 @@ public class Car {
     @ManyToOne
     private IsUser isUser;
 
+    @Column(nullable = false)
+    private Boolean adminsCanEdit;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "car_id", referencedColumnName = "id")
     private List<ObjectEvent> objectEvents = new ArrayList<>();
@@ -48,6 +52,11 @@ public class Car {
     public void setDtoData(CarDto dto) {
         this.name = dto.getName();
         this.cool = dto.getCool();
+    }
+
+    @Override
+    public Boolean isAdminsCanEdit() {
+        return this.adminsCanEdit;
     }
 
 }

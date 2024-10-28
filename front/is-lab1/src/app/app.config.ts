@@ -16,5 +16,6 @@ export const URL = 'http://localhost:8080'
 export const API_URLS = {
   AUTH: URL + '/api/auth',
   OBJECTS: URL + '/api/objects',
+  ROOTS: URL + '/api/roots',
   WEBSOCKET: URL + '/ws',
 };

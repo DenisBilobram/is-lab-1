@@ -28,18 +28,23 @@ public class RootsRequest {
     private LocalDateTime creationDate;
 
     @OneToOne
-    IsUser isUser;
+    private IsUser isUser;
 
     @Column()
     private Role role;
 
-    public RootsRequest(IsUser user) {
+    @Column
+    private Boolean isActive;
+
+    public RootsRequest(IsUser user, Role role) {
         this.isUser = user;
+        this.role = role;
     }
 
     @PrePersist
     protected void onCreate() {
         this.creationDate = LocalDateTime.now();
+        this.isActive = true;
     }
 
 }

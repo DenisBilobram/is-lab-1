@@ -64,6 +64,16 @@
 
             margin-top: 30px;
 
+            .object-list {
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+                .empty-request-list {
+                    margin-top: 10px;
+                    color: #999999;
+                }
+            }
+
             .columns-container {
                 display: flex;
                 width: 100%;

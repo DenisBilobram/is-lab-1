@@ -8,6 +8,8 @@ import { logoutGuard } from './auth/logout.guard';
 import { AppComponent } from './app.component';
 import { MainComponent } from './shared/main/main.component';
 import { ObjectsCreatorComponent } from './objects/objects-creator/objects-creator.component';
+import { OperationsComponent } from './objects/operations/operations.component';
+import { VizualComponent } from './objects/vizual/vizual.component';
 
 export const routes: Routes = [
     {
@@ -24,6 +26,16 @@ export const routes: Routes = [
                 path: 'profile',
                 title: 'Profile page',
                 component: ProfileComponent,
+            },
+            {
+                path: 'operations',
+                title: 'Operations page',
+                component: OperationsComponent,
+            },
+            {
+                path: 'vizualization',
+                title: 'Vizualization page',
+                component: VizualComponent,
             },
         ]
     },
@@ -49,7 +61,7 @@ export const routes: Routes = [
         canActivate: [logoutGuard]
     },
     {
-        path: 'auth/login/password',
+        path: 'auth/password-reset',
         title: 'Password Reset Page',
         component: PasswordResetComponent
     },

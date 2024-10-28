@@ -1,6 +1,6 @@
 @if (object) {
     <div class="object-container">
-        <a class="object-link" routerLink="edit/{{ entityType }}/{{ object.id }}">
+        <a class="object-link" routerLink="edit/{{ entityType }}/{{ object.id }}" [ngClass]="{'disabled': isAllowed == false}">
             @if (entityType == 'human-being') {
                 <div class="columns-container">
                     <div class="object-column">{{ humanBeing?.id }}</div>

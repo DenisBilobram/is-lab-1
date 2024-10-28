@@ -30,6 +30,7 @@ public class HumanBeingDto {
         this.weaponType = human.getWeaponType();
         this.isUser = human.getIsUser().getUsername();
         this.objectEvents = human.getObjectEvents().stream().map(event -> new ObjectEventDto(event)).toList();
+        this.adminsCanEdit = human.getAdminsCanEdit();
     }
 
     private Long id; //Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
@@ -63,6 +64,9 @@ public class HumanBeingDto {
     private WeaponType weaponType; //Поле не может быть null
 
     private String isUser;
+
+    @NotNull
+    private Boolean adminsCanEdit;
 
     private List<ObjectEventDto> objectEvents;
 

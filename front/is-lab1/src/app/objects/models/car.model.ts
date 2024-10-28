@@ -13,6 +13,8 @@ export interface Car {
 
     isUser: string;
 
+    adminsCanEdit: boolean;
+
     track: number;
 
     type: string;

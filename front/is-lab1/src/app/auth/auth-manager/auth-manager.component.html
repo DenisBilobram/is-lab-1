@@ -5,7 +5,7 @@
             <form [formGroup]="authform" (ngSubmit)="onLoginSubmit()" class="authForm">
                 <div class="lablel-input">
                     <label for="username">Username</label>
-                    <input id="name" formControlName="username" />
+                    <input id="username" formControlName="username" />
                 </div>
                 
                 @if (authform.get('username')?.invalid && authform.get('username')?.touched) {
@@ -28,14 +28,14 @@
                 <button class="auth-button" (click)="isRegister = true">Sign up</button>
 
                 <div class="forgot-password-container">
-                    <div class="forgot-password"><i><u><a [routerLink]="['password']">Forgot password?</a></u></i></div>
+                    <div class="forgot-password"><i><u><a routerLink='../password-reset'>Forgot password?</a></u></i></div>
                 </div>
             </form>
         } @else {
             <form [formGroup]="registrForm" (ngSubmit)="onRegisterSubmit()" class="authForm">
                 <div class="lablel-input">
                     <label for="username">Username</label>
-                    <input id="name" formControlName="username" />
+                    <input id="username" formControlName="username" />
                 </div>
                 
                 @if (registrForm.get('username')?.invalid && registrForm.get('username')?.touched) {
@@ -54,11 +54,11 @@
                 }
 
                 <div class="lablel-input">
-                    <label for="username">Email</label>
+                    <label for="email">Email</label>
                     <input id="email" formControlName="email" />
                 </div>
                 
-                @if (registrForm.get('email')?.invalid && registrForm.get('username')?.touched) {
+                @if (registrForm.get('email')?.invalid && registrForm.get('email')?.touched) {
                     <div class="form-error"><i>It must be email.</i></div>
                 } @else {
                     <div class="form-error"></div>

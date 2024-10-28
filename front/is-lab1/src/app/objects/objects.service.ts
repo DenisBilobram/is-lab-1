@@ -6,6 +6,8 @@ import { EntityDataMap, EntityType } from './objects-manager/objects-manager.com
 import { Car } from './models/car.model';
 import { HumanBeing } from './models/human-being.model';
 import { Coordinates } from './models/coordinates.model';
+import { WeaponType } from './models/weapon-type.enum';
+import { urlencoded } from 'express';
 
 @Injectable({
   providedIn: 'root'
@@ -36,6 +38,56 @@ export class ObjectsService {
 
   deleteObject(type: EntityType, objectId: number): Observable<any> {
     return this.http.delete(`${API_URLS.OBJECTS}/${type}/${objectId}`);
+  }
+
+  countImpactSpeed(impactSpeed: number): Observable<any> {
+    return this.http.get(`${API_URLS.OBJECTS}/human-being/count/impact-speed/${impactSpeed}`); 
+  }
+
+  findByNameContaining(str: string): Observable<any> {
+    return this.http.get(`${API_URLS.OBJECTS}/human-being/search/name?substring=${encodeURI(str)}`); 
+  }
+
+  findByWeaponTypeGreaterThan(weaponType: WeaponType): Observable<any> {
+    return this.http.get(`${API_URLS.OBJECTS}/human-being/search/weapon-type?weaponType=${encodeURI(weaponType)}`); 
+  }
+
+  deleteAllWithoutToothpick() {
+    return this.http.delete(`${API_URLS.OBJECTS}/human-being/delete/without-toothpick`)
+  }
+
+  updateMoodForAll() {
+    return this.http.put(`${API_URLS.OBJECTS}/human-being/update/mood-sorrow`, {});
+  }
+
+  updateTracks(objects: HumanBeing[] | Car[] | Coordinates[]): any[] {
+    let track: number = 0;
+    objects.forEach(object => {
+      object.track = track++;
+    })
+
+    return objects;
+  }
+
+  perfromeEvent(objectsList: any[], object: any): any[] {
+    let currentList: any[] = [...objectsList];
+  
+    switch (object.type) {
+      case "UPDATE":
+        const indexToUpdate = currentList.findIndex(el => el.id === object.id);
+        if (indexToUpdate !== -1) {
+          Object.assign(currentList[indexToUpdate], object);
+        }
+        break;
+      case "CREATE":
+        currentList.push(object);
+        break;
+      case "DELETE":
+        currentList = currentList.filter(el => el.id !== object.id);
+        break;
+    }
+
+    return this.updateTracks(currentList);
   }
 
 }

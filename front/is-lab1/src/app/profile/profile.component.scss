@@ -6,43 +6,46 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+
         .profile {
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 55%;
-            background-color: #2d2d2d;
-            box-shadow: 0 10px 30px rgba(136, 136, 136, 0.5);
+            width: 45%;
+            min-width: 375px;
+            background-color: rgb(24, 24, 24);
+            box-shadow: 0px 1px 20px rgba(100, 100, 100, 0.911);
+            border: 2px solid white;
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 2px;
             margin-top: 10px;
             margin-bottom: 10px;
             .profile-header {
-                font-size: 26px;
+                font-size: 24px;
                 letter-spacing: 2px;
                 margin-bottom: 20px;
             }
 
             .profile-data {
-                font-size: 20px;
+                font-size: 18px;
                 width: 100%;
 
                 .profile-data-field {
                     display: flex;
                     flex-direction: row;
                     margin-bottom: 15px;
-                    padding: 10px;
-                    background-color: rgb(202, 202, 202);
+                    padding: 5px;
+                    background-color: rgb(255, 255, 255);
                     color: black;
-                    border-radius: 10px;
-
+                    border-radius: 2px;
+                    justify-content: center;
                     .data-field {
-                        width: 150px;
+                        width: 125px;
                         text-wrap: nowrap;
                     }
 
                     .data-value {
-                        width: 50px;
+                        width: 175px;
                     }
                 }
             }
@@ -78,14 +81,102 @@
         }
 
         .roots-request-info {
-            margin-top: 20px;
-            height: 10px;
+            margin-top: 10px;
+            height: 20px;
+            margin-bottom: 10px;
         }
         .error {
             color: rgb(252, 53, 53);
         }
         .succes {
             color: rgb(26, 219, 0);
+        }
+    }
+
+    .roots-requests-continer {
+        border-top: 2px solid white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .roots-requests-header {
+            margin-bottom: 20px;
+            margin-top: 30px;
+            font-size: 22px;
+        }
+
+        .request-container {
+            display: flex;
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            .columns-container {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                .request-column {
+                    box-sizing: border-box;
+                    font-size: medium;
+                    border: 1px solid white;
+                    padding: 5px;
+                    word-wrap: break-word;
+                    word-break: break-word;
+                    white-space: normal;
+                    height: auto;
+                    width: 120px;
+                    text-align: center;
+                }
+
+                .doubled-column {
+                    width: 200px;
+                }
+
+                .half-column {
+                    width: 100px;
+                    padding: 0px;
+                    .request-button {
+                        cursor: pointer;
+                        width: 100%;
+                        height: 100%;
+                        margin: 0px;
+                        font-weight: bold;
+                        transition: 0.3s;
+                        color: black;
+                        &:active {
+                            opacity: 0.7;
+                        }
+                    }
+
+                    .aprove-button {
+                        
+                        background-color: white;
+                        box-shadow: 0px 1px 10px rgba(41, 3, 177, 0.911);
+
+                        &:hover {
+                            background-color: rgba(46, 0, 214, 0.911);
+                            color: white;
+                        }
+                    }
+
+                    .decline-button {
+                        background-color: white;
+                        box-shadow: 0px 1px 10px rgba(177, 3, 40, 0.911);
+
+                        &:hover {
+                            background-color: rgba(218, 5, 51, 0.911);
+                            color: white;
+                        }
+                    }
+                }
+            }
+
+            .first-column {
+                margin-bottom: 30px;
+            }
+            .empty-request-list {
+                color: #999999;
+            }
         }
     }
 }

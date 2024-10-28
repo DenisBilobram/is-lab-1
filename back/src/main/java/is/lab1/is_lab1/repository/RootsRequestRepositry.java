@@ -1,5 +1,7 @@
 package is.lab1.is_lab1.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,5 +12,7 @@ import is.lab1.is_lab1.model.RootsRequest;
 public interface RootsRequestRepositry extends JpaRepository<RootsRequest, Long> {
 
     public RootsRequest findByIsUser(IsUser user);
+
+    public List<RootsRequest> findAllByIsActive(Boolean isActive);
     
 }

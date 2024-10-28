@@ -11,8 +11,8 @@
                 <div class="data-value">{{ email }}</div>
             </div>
             <div class="profile-data-field">
-                <div class="data-field"><i>Admin Roots:</i></div>
-                <div class="data-value"> {{ isAdmin }}</div>
+                <div class="data-field"><i>Role:</i></div>
+                <div class="data-value"> {{ isAdmin ? 'Admin' : 'User' }}</div>
             </div>
         </div>
     </div>
@@ -27,3 +27,28 @@
 
     <div class="roots-request-info" [ngClass]="requestSuccses ? 'succes' : 'error'"><i>{{ requestInfo }}</i></div>
 </div>
+
+@if (isAdmin) {
+
+    <div class="roots-requests-continer">
+        <div class="roots-requests-header">Requests for ADMIN roots</div>
+        <div class="request-container">
+            <div class="columns-container first-column">
+                <div class="request-column">User</div>
+                <div class="request-column">Date</div>
+                <div class="request-column doubled-column">Action</div>
+            </div>
+            @for (request of rootsRequests; track $index) {
+                <div class="columns-container">
+                    <div class="request-column">{{ request.isUser }}</div>
+                    <div class="request-column">{{ request.creationDate }}</div>
+                    <div class="request-column half-column"><button (click)="requestAprove(request.id)" class="request-button aprove-button">Aprove</button></div>
+                    <div class="request-column half-column"><button (click)="requestDecline(request.id)" class="request-button decline-button">Decline</button></div>
+                </div>
+            }
+            @if ( rootsRequests.length == 0 ) {
+                <div class="empty-request-list"><i>There are no requests for now.</i></div>
+            }
+        </div>
+    </div>
+}

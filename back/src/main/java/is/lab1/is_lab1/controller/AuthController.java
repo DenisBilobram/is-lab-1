@@ -1,7 +1,5 @@
 package is.lab1.is_lab1.controller;
 
-import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -10,26 +8,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import is.lab1.is_lab1.service.IsUserDetails;
+import is.lab1.is_lab1.service.EmailService;
 import is.lab1.is_lab1.service.IsUserDetailsService;
+import is.lab1.is_lab1.service.PasswordResetService;
 import is.lab1.is_lab1.service.RootsRequestService;
 import is.lab1.is_lab1.component.JwtUtil;
+import is.lab1.is_lab1.controller.exception.EmailNotFoundException;
+import is.lab1.is_lab1.controller.exception.InvalidResetTokenException;
 import is.lab1.is_lab1.controller.exception.RegistrationFailException;
-import is.lab1.is_lab1.controller.exception.RootsRequestAlreadyExist;
 import is.lab1.is_lab1.controller.request.AuthenticationRequest;
 import is.lab1.is_lab1.controller.request.AuthenticationResponse;
+import is.lab1.is_lab1.controller.request.ForgotPasswordRequest;
+import is.lab1.is_lab1.controller.request.ResetPasswordRequest;
 import is.lab1.is_lab1.model.IsUser;
-import is.lab1.is_lab1.model.Role;
-import is.lab1.is_lab1.model.RootsRequest;
-import is.lab1.is_lab1.repository.IsUserRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import is.lab1.is_lab1.model.PasswordResetToken;
 
 
 @RestController
@@ -43,10 +40,13 @@ public class AuthController {
     private IsUserDetailsService userDetailsService;
 
     @Autowired
-    private IsUserRepository userRepository;
+    private JwtUtil jwtTokenUtil;
 
     @Autowired
-    private JwtUtil jwtTokenUtil;
+    private PasswordResetService resetService;
+
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     RootsRequestService rootsRequestService;
@@ -69,7 +69,7 @@ public class AuthController {
             .maxAge(7 * 24 * 60 * 60)
             .build();
 
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(new AuthenticationResponse(jwt, newUser.getUsername(), newUser.getEmail(), newUser.isAdmin()));
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(new AuthenticationResponse(jwt, newUser.getUsername(), newUser.getEmail()));
 
     }
 
@@ -78,7 +78,7 @@ public class AuthController {
 
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
         
-        final IsUser isUser = userRepository.findByUsername(authenticationRequest.getUsername()).get();
+        final IsUser isUser = userDetailsService.getByUsername(authenticationRequest.getUsername());
         
         final String jwt = jwtTokenUtil.generateToken(isUser.getUsername());
 
@@ -88,24 +88,29 @@ public class AuthController {
             .maxAge(7 * 24 * 60 * 60)
             .build();
 
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(new AuthenticationResponse(jwt, isUser.getUsername(), isUser.getEmail(), isUser.isAdmin()));
-    }
-
-    @PostMapping("/roots")
-    public ResponseEntity<?> createRootsRequest(@AuthenticationPrincipal IsUserDetails userDetails) throws RootsRequestAlreadyExist {
-        
-        RootsRequest rootsRequest = new RootsRequest(userDetails.getIsUser());
-
-        rootsRequestService.create(rootsRequest);
-
-        return ResponseEntity.ok(HttpStatus.OK);
-
-    }
-
-    @GetMapping("/roots")
-    public ResponseEntity<Set<Role>> getRoles(@AuthenticationPrincipal IsUserDetails userDetails) {
-        return new ResponseEntity<>(userDetails.getIsUser().getRoles(), HttpStatus.OK);
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(new AuthenticationResponse(jwt, isUser.getUsername(), isUser.getEmail()));
     }
     
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) throws EmailNotFoundException {
+        IsUser user = userDetailsService.getByEmail(forgotPasswordRequest.getEmail());
+
+        PasswordResetToken token = resetService.createPasswordResetTokenForUser(user);
+        emailService.sendPasswordResetEmail(user, token.getToken());
+
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) throws InvalidResetTokenException {
+
+        PasswordResetToken passToken = resetService.validatePasswordResetToken(resetPasswordRequest.getToken());
+
+        IsUser user = passToken.getUser();
+        resetService.resetPassword(user, resetPasswordRequest.getNewPassword());
+
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
     
 }

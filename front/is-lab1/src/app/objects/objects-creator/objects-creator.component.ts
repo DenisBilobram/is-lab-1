@@ -6,11 +6,13 @@ import { ActivatedRoute, ParamMap, RouterLink, Router } from '@angular/router';
 import { error } from 'console';
 import { Car } from '../models/car.model';
 import { Coordinates } from '../models/coordinates.model';
+import { NgIf } from '@angular/common';
+import { HumanBeing } from '../models/human-being.model';
 
 @Component({
   selector: 'app-objects-creator',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, NgIf],
   templateUrl: './objects-creator.component.html',
   styleUrl: './objects-creator.component.scss'
 })
@@ -18,7 +20,7 @@ export class ObjectsCreatorComponent {
 
   entityType: EntityType | null = null;
 
-  objectForm?: FormGroup;
+  objectForm: FormGroup;
 
   errorMessage: string = '';
 
@@ -32,8 +34,14 @@ export class ObjectsCreatorComponent {
 
   isEditMode?: boolean;
 
+  haveAccess: boolean = true;
+
+  resultText: string = "";
+
   constructor(private objectsService: ObjectsService, private fb: FormBuilder, private route: ActivatedRoute, private router: Router) {
-      this.route.paramMap.subscribe((params: ParamMap) => {
+
+    this.objectForm = this.fb.group({});
+    this.route.paramMap.subscribe((params: ParamMap) => {
       const entityTypeParam = params.get('entityType');
       this.entityType = entityTypeParam as EntityType;
 
@@ -42,14 +50,13 @@ export class ObjectsCreatorComponent {
         this.objectId = Number(idParam);
       }
       this.isEditMode = !!this.objectId;
+      
       this.initForm();
 
       if (this.isEditMode && this.objectId) {
         this.loadObject();
       }
     });
-
-    this.loadObjects();
   }
 
   private initForm(): void {
@@ -65,21 +72,24 @@ export class ObjectsCreatorComponent {
           mood: ['', Validators.required],
           impactSpeed: [null, Validators.required],
           soundtrackName: ['', Validators.required],
-          weaponType: ['', Validators.required]
+          weaponType: ['', Validators.required],
+          adminsCanEdit: [true, Validators.required],
         });
         break;
 
       case 'car':
         this.objectForm = this.fb.group({
           name: ['', Validators.required],
-          cool: [false, Validators.required]
+          cool: [false, Validators.required],
+          adminsCanEdit: [true, Validators.required],
         });
         break;
 
       case 'coordinates':
         this.objectForm = this.fb.group({
           x: [null, [Validators.required, Validators.min(-419)]],
-          y: [null, [Validators.required, Validators.min(-453)]]
+          y: [null, [Validators.required, Validators.min(-453)]],
+          adminsCanEdit: [true, Validators.required],
         });
         break;
 
@@ -96,15 +106,22 @@ export class ObjectsCreatorComponent {
       return;
     }
     if (this.isEditMode && this.objectId) {
-      this.objectsService.updateObject(this.entityType, this.objectId, this.objectForm?.value).subscribe(
-        response => {
-          console.log('Object updated', response);
+      this.objectsService.updateObject(this.entityType, this.objectId, this.objectForm?.value).subscribe({
+        next: (response) => {
+          this.resultText = 'Object updated.';
         },
+        error: (error) => {
+          if (error.status == 403) {
+            this.haveAccess = false;
+          }
+        }
+      }
+        
       );
     } else {
       this.objectsService.postObject(this.entityType, this.objectForm?.value).subscribe(
         response => {
-          console.log('Object created', response);
+          this.resultText = 'Object created.';
         },
       );
     }
@@ -113,10 +130,15 @@ export class ObjectsCreatorComponent {
 
   loadObject() {
     if (this.entityType != null && this.objectId != null) {
-      this.objectsService.getObject(this.entityType, this.objectId).subscribe(object => {
-        this.objectForm?.patchValue(object);
-        this.loadedObject = object;
-        console.log(object);
+      this.objectsService.getObject(this.entityType, this.objectId).subscribe({
+        next: (object) => {
+          this.objectForm.patchValue(object);
+          this.loadedObject = object;
+
+        },
+        error: (error) => {
+          this.haveAccess = false;
+        }
       })
     }
   }

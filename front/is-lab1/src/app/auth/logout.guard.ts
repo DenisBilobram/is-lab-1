@@ -7,6 +7,7 @@ export const logoutGuard: CanActivateFn = (route, state) => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('email');
     localStorage.removeItem('username');
+    localStorage.removeItem('isAdmin')
   }
   
 

@@ -1,0 +1,33 @@
+<div class="vizual-wrapper">
+    <div class="vizual-header">Objects Field:</div>
+    <canvas
+    #canvas
+    width="720"
+    height="600"
+    (mousedown)="onMouseDown($event)"
+    (mouseup)="onMouseUp($event)"
+    (mouseleave)="onMouseUp($event)"
+    (mousemove)="onMouseMove($event)">
+    </canvas>
+    @if (chosenObjects.length != 0) {
+        <div class="human-header">Chosen HumanBeings:</div>
+        @for (object of chosenObjects; track $index) {
+            <div class="human-container">
+                <div class="human-labels">
+                    <div class="human-label"><div class="first"><i>Id</i></div><div></div></div>
+                    <div class="human-label"><div class="first"><i>Name</i></div><div></div></div>
+                    <div class="human-label"><div class="first"><i>Coord x</i></div><div></div></div>
+                    <div class="human-label"><div class="first"><i>Coord y</i></div><div></div></div>
+                    <div class="human-label"><div class="first"><i>User</i></div><div></div></div>
+                </div>
+                <div class="human-values">
+                    <div class="human-value">{{ object.human.id }}</div>
+                    <div class="human-value">{{ object.human.name }}</div>
+                    <div class="human-value">{{ object.coordinates.x }}</div>
+                    <div class="human-value">{{ object.coordinates.y }}</div>
+                    <div class="human-value">{{ object.human.isUser }}</div>
+                </div>
+            </div>
+        }
+    }
+</div>

@@ -1,6 +1,8 @@
 package is.lab1.is_lab1.service;
 
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,7 +15,9 @@ import is.lab1.is_lab1.model.Coordinates;
 import is.lab1.is_lab1.model.EventType;
 import is.lab1.is_lab1.model.HumanBeing;
 import is.lab1.is_lab1.model.IsUser;
+import is.lab1.is_lab1.model.Mood;
 import is.lab1.is_lab1.model.ObjectEvent;
+import is.lab1.is_lab1.model.WeaponType;
 import is.lab1.is_lab1.repository.HumanBeingRepository;
 import is.lab1.is_lab1.repository.ObjectEventRepository;
 import jakarta.transaction.Transactional;
@@ -38,6 +42,7 @@ public class HumanBeingService {
         return humanBeingRepository.save(humanBeing);
     }
 
+    @PreAuthorize("@accessService.canAccessHumanBeing(#humanBeing.id)")
     @Transactional
     public HumanBeing updateHumanBeing(HumanBeing humanBeing, IsUser user) {
 
@@ -59,14 +64,14 @@ public class HumanBeingService {
         }
     }
 
+    @PreAuthorize("@accessService.canAccessHumanBeing(#id)")
     public HumanBeing getWithAcces(Long id, IsUser user) throws AccessDeniedException {
         HumanBeing humanBeing = humanBeingRepository.getReferenceById(id);
-
-        if (!humanBeing.getIsUser().equals(user)) throw new AccessDeniedException("No acces to this object.");
 
         return humanBeing;
     }
 
+    @PreAuthorize("@accessService.canAccessHumanBeing(#humanBeing.id)")
     public void delete(HumanBeing humanBeing) {
 
         humanBeingRepository.delete(humanBeing);
@@ -83,6 +88,32 @@ public class HumanBeingService {
 
         return humanBeingRepository.findByCoordinates(coordinates);
 
+    }
+
+    public long countByImpactSpeed(int impactSpeed) {
+        return humanBeingRepository.countByImpactSpeed(impactSpeed);
+    }
+
+    public List<HumanBeing> findByNameContaining(String substring) {
+        return humanBeingRepository.findByNameContaining(substring);
+    }
+
+    public List<HumanBeing> findByWeaponTypeGreaterThan(WeaponType weaponType) {
+        return humanBeingRepository.findByWeaponTypeGreaterThan(weaponType);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @Transactional
+    public void deleteAllHeroesWithoutToothpick() {
+        List<HumanBeing> humans = humanBeingRepository.findByRealHeroAndHasToothpick(true, false);
+        humans.stream().forEach(human -> objectEventRepository.deleteAll(human.getObjectEvents()));
+        humanBeingRepository.deleteHerosByHasToothpickFalse();
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @Transactional
+    public void updateMoodForAll(Mood newMood) {
+        humanBeingRepository.updateMoodForAll(newMood);
     }
 
 }

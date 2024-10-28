@@ -1,6 +1,8 @@
 package is.lab1.is_lab1.service;
 
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -48,6 +50,7 @@ public class CoordinatesService {
 
     }
 
+    @PreAuthorize("@accessService.canAccessCoordinates(#coordinates.id)")
     @Transactional
     public Coordinates updateCoordinates(Coordinates coordinates, IsUser user) {
 
@@ -69,14 +72,15 @@ public class CoordinatesService {
         }
     }
 
+    @PreAuthorize("@accessService.canAccessCoordinates(#id)")
     public Coordinates getWithAcces(Long id, IsUser user) throws AccessDeniedException {
+
         Coordinates coordinates = coordinatesRepository.getReferenceById(id);
-
-        if (!coordinates.getIsUser().equals(user)) throw new AccessDeniedException("No acces to this object.");
-
         return coordinates;
+        
     }
 
+    @PreAuthorize("@accessService.canAccessCoordinates(#coordinates.id)")
     @Transactional
     public void delete(Coordinates coordinates) {
 

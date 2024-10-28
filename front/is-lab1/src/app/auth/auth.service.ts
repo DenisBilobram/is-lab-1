@@ -13,7 +13,7 @@ export class AuthService {
   login(credentials: { username: string; password: string }): Observable<any> {
     return this.http.post<any>(`${API_URLS.AUTH}/login`, credentials, {withCredentials: true}).pipe(
       tap(response => {
-        this.setData(response.username, response.email, response.jwt, response.isAdmin);
+        this.setData(response.username, response.email, response.jwt);
       }),
     );
   }
@@ -21,23 +21,22 @@ export class AuthService {
   register(credentials: { username: string; password: string; email: string}): Observable<any> {
     return this.http.post<any>(`${API_URLS.AUTH}/register`, credentials, {withCredentials: true}).pipe(
       tap(response => {
-        this.setData(response.username, response.email, response.jwt, response.isAdmin);
+        this.setData(response.username, response.email, response.jwt);
       })
     );
   }
 
-  adminRootsRequest(): Observable<any> {
-    return this.http.post<any>(`${API_URLS.AUTH}/roots`, {});
+  forgotPassword(credentials: { email: string }): Observable<any> {
+    return this.http.post(`${API_URLS.AUTH}/forgot-password`, credentials, {withCredentials: true});
   }
 
-  getRoles(): Observable<any> {
-    return this.http.get<any>(`${API_URLS.AUTH}/roots`, {});
+  resetPassword(credentials: { token: string, newPassword: string}): Observable<any> {
+    return this.http.post(`${API_URLS.AUTH}/reset-password`, credentials, {withCredentials: true});
   }
 
-  setData(username: string, email: string, jwt: string, isAdmin: string) {
+  setData(username: string, email: string, jwt: string) {
     localStorage.setItem('username', username);
     localStorage.setItem('email', email);
     localStorage.setItem('authToken', jwt);
-    localStorage.setItem('isAdmin', isAdmin);
   }
 }

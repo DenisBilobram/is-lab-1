@@ -12,6 +12,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { TrackFilterPipe } from './track-filter.pipe';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { WebScoketService } from '../web-scoket.service';
+import { RootsService } from '../../profile/roots.service';
 
 export type EntityType = 'human-being' | 'car' | 'coordinates';
 
@@ -57,6 +58,8 @@ export class ObjectsManagerComponent implements OnInit  {
 
   filterForm: FormGroup;
 
+  isAdmin: boolean = false;
+
   currentPage: number = 0;
   readonly PAGE_SIZE: number = 10;
 
@@ -65,13 +68,18 @@ export class ObjectsManagerComponent implements OnInit  {
   constructor(
     private objectsService: ObjectsService,
     private fb: FormBuilder,
-    private webScoketService: WebScoketService
+    private webScoketService: WebScoketService,
+    private rootsService: RootsService
   ) {this.filterForm = this.fb.group({})}
 
   ngOnInit(): void {
     this.loadObjects();
+    this.rootsService.getRoles().subscribe();
     this.initForm();
-    this.setupSseSubscription();
+    this.setupSubscription();
+    if (localStorage["isAdmin"] as boolean) {
+      this.isAdmin = true;
+    }
   }
 
   private initForm(): void {
@@ -123,35 +131,18 @@ export class ObjectsManagerComponent implements OnInit  {
       if (this.webScoketSubs) {
         this.webScoketSubs.unsubscribe();
       }
-      this.setupSseSubscription();
+      this.setupSubscription();
     }
   }
 
-  setupSseSubscription(): void {
+  setupSubscription(): void {
     this.webScoketSubs = this.webScoketService.subscribe(this.selectedEntity)
       .subscribe({
         next: (object: any) => {
   
-          let currentList: any[] = [...this.lastRequestObjects];
-  
-          switch (object.type) {
-            case "UPDATE":
-              const indexToUpdate = currentList.findIndex(el => el.id === object.id);
-              if (indexToUpdate !== -1) {
-                Object.assign(currentList[indexToUpdate], object);
-              }
-              break;
-            case "CREATE":
-              currentList.push(object);
-              break;
-            case "DELETE":
-              currentList = currentList.filter(el => el.id !== object.id);
-              console.log(currentList);
-              break;
-          }
-  
-          this.updateTracks(currentList);
+          let currentList = this.objectsService.perfromeEvent(this.lastRequestObjects, object);
           this.updateObjects(currentList);
+          
         },
         error: (error) => {
           console.log(error);
@@ -292,7 +283,7 @@ export class ObjectsManagerComponent implements OnInit  {
       return (
         (humanFilter.id as unknown == "" || obj.id == humanFilter.id) &&
         (humanFilter.name == "" || obj.name.toLowerCase().includes(humanFilter.name.toLowerCase())) &&
-        (humanFilter.coordinates as unknown == ""  || String(obj.coordinates) == humanFilter.coordinates) &&
+        (humanFilter.coordinates as unknown == ""  || obj.coordinates == humanFilter.coordinates) &&
         (humanFilter.creationDate == "" || this.formatDate(obj.creationDate) == humanFilter.creationDate) &&
         (humanFilter.realHero as unknown  == "" || String(obj.realHero) == String(humanFilter.realHero)) &&
         (humanFilter.hasToothpick as unknown == "" || String(obj.hasToothpick) == String(humanFilter.hasToothpick)) &&
