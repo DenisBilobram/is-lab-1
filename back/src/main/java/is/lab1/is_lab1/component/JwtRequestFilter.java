@@ -52,11 +52,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
         }
 
+
         if (jwt != null) {
             try {
                 username = jwtUtil.extractUsername(jwt);
             } catch (Exception e) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 chain.doFilter(request, response);
             }
         } 

@@ -42,7 +42,6 @@ public class SecurityConfig {
         http.cors(cors -> cors.configurationSource(configurationSource))
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests.requestMatchers("/error").permitAll()
-                                    // .requestMatchers("/api/objects/human-being/subscribe").permitAll()
                                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                     .requestMatchers("/api/auth/**").permitAll()
                                     .requestMatchers("/api/objects/**").authenticated()

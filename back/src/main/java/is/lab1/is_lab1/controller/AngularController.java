@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping(value = {"/objects/**", "/profile/**", "/operations/**", "/vizualization/**", "/auth/**"})
+@RequestMapping(value = {"/objects", "/profile/**", "/operations/**", "/vizualization/**", "/auth/**"})
 public class AngularController {
     
     @GetMapping()
