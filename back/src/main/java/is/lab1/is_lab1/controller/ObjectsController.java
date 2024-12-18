@@ -3,6 +3,9 @@ package is.lab1.is_lab1.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import is.lab1.is_lab1.controller.request.CarDto;
 import is.lab1.is_lab1.controller.request.CoordinatesDto;
 import is.lab1.is_lab1.controller.request.HumanBeingDto;
@@ -16,7 +19,9 @@ import is.lab1.is_lab1.service.CarService;
 import is.lab1.is_lab1.service.CoordinatesService;
 import is.lab1.is_lab1.service.HumanBeingService;
 import is.lab1.is_lab1.service.IsUserDetails;
+import is.lab1.is_lab1.service.ObjectsImportService;
 import is.lab1.is_lab1.service.WebSocketService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 
@@ -55,6 +60,11 @@ public class ObjectsController {
 
     @Autowired
     private CarService carService;
+
+    @Autowired
+    private ObjectsImportService importService;
+    
+
     
     @SuppressWarnings("null")
     @PostMapping("human-being")
@@ -304,6 +314,94 @@ public class ObjectsController {
     public ResponseEntity<?> updateMoodForAll() {
         humanBeingService.updateMoodForAll(Mood.SORROW);
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @Transactional
+    @PostMapping("human-being/import")
+    public ResponseEntity<?> jsonImportHumanBeings(@RequestParam String jsonObjects, @AuthenticationPrincipal IsUserDetails userDetails)
+                                                                            throws Exception {
+        if (jsonObjects == null || jsonObjects == "") return ResponseEntity.badRequest().build();
+
+        List<HumanBeingDto> humansDto = importService.importHumanBeings(jsonObjects);
+
+        for (HumanBeingDto humanDto : humansDto) {
+
+            Coordinates coords = null;
+            Car car = null;
+            if (humanDto.getCarName() != null && humanDto.getCarCool() != null) {
+                CoordinatesDto coordDto = new CoordinatesDto();
+                coordDto.setX(humanDto.getCoordinatesX());
+                coordDto.setY(humanDto.getCoordinatesY());
+                coordDto.setAdminsCanEdit(true);
+                coords = new Coordinates(coordDto, userDetails.getIsUser());
+                coords = coordinatesService.createCoordinates(coords);
+                if (coords == null) throw new Exception();
+                humanDto.setCoordinates(coords.getId());
+            }
+            if (humanDto.getCoordinatesX() != null) {
+                CarDto carDto = new CarDto();
+                carDto.setName(humanDto.getCarName());
+                carDto.setCool(humanDto.getCarCool());
+                carDto.setAdminsCanEdit(true);
+                car = new Car(carDto, userDetails.getIsUser());
+                car = carService.createCar(car);
+                if (car == null) throw new Exception();
+                humanDto.setCar(car.getId());
+            } else {
+                throw new Exception();
+            }
+
+            HumanBeing human = new HumanBeing(humanDto, userDetails.getIsUser(), coords);
+            if (car != null) {
+                human.setCar(car);
+            }
+            humanBeingService.createHumanBeing(human);
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    @Transactional
+    @PostMapping("coordinates/import")
+    public ResponseEntity<?> jsonImportCoordinates(@RequestParam String jsonObjects, @AuthenticationPrincipal IsUserDetails userDetails)
+                                                                            throws Exception {
+        if (jsonObjects == null || jsonObjects == "") return ResponseEntity.badRequest().build();
+
+        List<CoordinatesDto> coordinatesDto = importService.importCoordinates(jsonObjects);
+
+        for (HumanBeingDto humanDto : humansDto) {
+            System.out.println(humanDto.getAdminsCanEdit());
+            Coordinates coords = null;
+            Car car = null;
+            if (humanDto.getCarName() != null && humanDto.getCarCool() != null) {
+                CoordinatesDto coordDto = new CoordinatesDto();
+                coordDto.setX(humanDto.getCoordinatesX());
+                coordDto.setY(humanDto.getCoordinatesY());
+                coordDto.setAdminsCanEdit(true);
+                coords = new Coordinates(coordDto, userDetails.getIsUser());
+                coords = coordinatesService.createCoordinates(coords);
+                if (coords == null) throw new Exception();
+                humanDto.setCoordinates(coords.getId());
+            }
+            if (humanDto.getCoordinatesX() != null) {
+                CarDto carDto = new CarDto();
+                carDto.setName(humanDto.getCarName());
+                carDto.setCool(humanDto.getCarCool());
+                carDto.setAdminsCanEdit(true);
+                car = new Car(carDto, userDetails.getIsUser());
+                car = carService.createCar(car);
+                if (car == null) throw new Exception();
+                humanDto.setCar(car.getId());
+            } else {
+                throw new Exception();
+            }
+
+            HumanBeing human = new HumanBeing(humanDto, userDetails.getIsUser(), coords);
+            if (car != null) {
+                human.setCar(car);
+            }
+            humanBeingService.createHumanBeing(human);
+        }
+        return ResponseEntity.ok().build();
     }
     
 }

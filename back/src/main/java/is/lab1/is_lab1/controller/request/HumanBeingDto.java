@@ -71,4 +71,9 @@ public class HumanBeingDto {
     private List<ObjectEventDto> objectEvents;
 
     ObjectOperationType type;
+
+    private String carName;
+    private Boolean carCool;
+    private Double coordinatesX;
+    private float coordinatesY;
 }
