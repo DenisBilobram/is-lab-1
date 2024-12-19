@@ -366,41 +366,31 @@ public class ObjectsController {
                                                                             throws Exception {
         if (jsonObjects == null || jsonObjects == "") return ResponseEntity.badRequest().build();
 
-        List<CoordinatesDto> coordinatesDto = importService.importCoordinates(jsonObjects);
+        List<CoordinatesDto> coordsDtos = importService.importCoordinates(jsonObjects);
 
-        for (HumanBeingDto humanDto : humansDto) {
-            System.out.println(humanDto.getAdminsCanEdit());
-            Coordinates coords = null;
-            Car car = null;
-            if (humanDto.getCarName() != null && humanDto.getCarCool() != null) {
-                CoordinatesDto coordDto = new CoordinatesDto();
-                coordDto.setX(humanDto.getCoordinatesX());
-                coordDto.setY(humanDto.getCoordinatesY());
-                coordDto.setAdminsCanEdit(true);
-                coords = new Coordinates(coordDto, userDetails.getIsUser());
-                coords = coordinatesService.createCoordinates(coords);
-                if (coords == null) throw new Exception();
-                humanDto.setCoordinates(coords.getId());
-            }
-            if (humanDto.getCoordinatesX() != null) {
-                CarDto carDto = new CarDto();
-                carDto.setName(humanDto.getCarName());
-                carDto.setCool(humanDto.getCarCool());
-                carDto.setAdminsCanEdit(true);
-                car = new Car(carDto, userDetails.getIsUser());
-                car = carService.createCar(car);
-                if (car == null) throw new Exception();
-                humanDto.setCar(car.getId());
-            } else {
-                throw new Exception();
-            }
-
-            HumanBeing human = new HumanBeing(humanDto, userDetails.getIsUser(), coords);
-            if (car != null) {
-                human.setCar(car);
-            }
-            humanBeingService.createHumanBeing(human);
+        for (CoordinatesDto coordsDto : coordsDtos) {
+            Coordinates coords = new Coordinates(coordsDto, userDetails.getIsUser());
+            coords.setAdminsCanEdit(true);
+            coordinatesService.createCoordinates(coords);
         }
+
+        return ResponseEntity.ok().build();
+    }
+
+    @Transactional
+    @PostMapping("car/import")
+    public ResponseEntity<?> jsonImportCar(@RequestParam String jsonObjects, @AuthenticationPrincipal IsUserDetails userDetails)
+                                                                            throws Exception {
+        if (jsonObjects == null || jsonObjects == "") return ResponseEntity.badRequest().build();
+
+        List<CarDto> carDtos = importService.importCars(jsonObjects);
+
+        for (CarDto carDto : carDtos) {
+            Car car = new Car(carDto, userDetails.getIsUser());
+            car.setAdminsCanEdit(true);
+            carService.createCar(car);
+        }
+
         return ResponseEntity.ok().build();
     }
     
