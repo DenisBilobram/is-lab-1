@@ -90,4 +90,12 @@ export class ObjectsService {
     return this.updateTracks(currentList);
   }
 
+  importObjects(type: EntityType | null, objects: String): Observable<any> {
+    return this.http.post(`${API_URLS.OBJECTS}/${type}/import`, objects);
+  }
+
+  getImportHistory(type: EntityType): Observable<any> {
+    return this.http.get(`${`${API_URLS.OBJECTS}/${type}/import`}`);
+  }
+
 }

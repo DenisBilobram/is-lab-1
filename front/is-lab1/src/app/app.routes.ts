@@ -10,6 +10,7 @@ import { MainComponent } from './shared/main/main.component';
 import { ObjectsCreatorComponent } from './objects/objects-creator/objects-creator.component';
 import { OperationsComponent } from './objects/operations/operations.component';
 import { VizualComponent } from './objects/vizual/vizual.component';
+import { ImportComponent } from './objects/import/import.component';
 
 export const routes: Routes = [
     {
@@ -43,6 +44,11 @@ export const routes: Routes = [
         path: 'objects/create/:entityType',
         title: 'Object Create Page',
         component: ObjectsCreatorComponent
+    },
+    {
+        path: 'objects/import/:entityType',
+        title: 'Object Import Page',
+        component: ImportComponent
     },
     {
         path: 'objects/edit/:entityType/:id',

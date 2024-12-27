@@ -3,12 +3,12 @@ package is.lab1.is_lab1.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import is.lab1.is_lab1.controller.exception.CarWithNameAlreadtExistException;
+import is.lab1.is_lab1.controller.exception.CoordinatesAlreadyExistException;
 import is.lab1.is_lab1.controller.request.CarDto;
 import is.lab1.is_lab1.controller.request.CoordinatesDto;
 import is.lab1.is_lab1.controller.request.HumanBeingDto;
+import is.lab1.is_lab1.controller.request.ImportActionDto;
 import is.lab1.is_lab1.controller.request.ObjectOperationType;
 import is.lab1.is_lab1.model.Car;
 import is.lab1.is_lab1.model.Coordinates;
@@ -18,14 +18,16 @@ import is.lab1.is_lab1.model.WeaponType;
 import is.lab1.is_lab1.service.CarService;
 import is.lab1.is_lab1.service.CoordinatesService;
 import is.lab1.is_lab1.service.HumanBeingService;
+import is.lab1.is_lab1.service.ImportActionService;
 import is.lab1.is_lab1.service.IsUserDetails;
-import is.lab1.is_lab1.service.ObjectsImportService;
+import is.lab1.is_lab1.service.ValidatorService;
 import is.lab1.is_lab1.service.WebSocketService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import jakarta.validation.ValidationException;
 
 import org.springframework.security.access.AccessDeniedException;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,7 +35,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,9 +42,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PutMapping;
-
-
-
 
 @RestController
 @RequestMapping("api/objects")
@@ -62,18 +60,15 @@ public class ObjectsController {
     private CarService carService;
 
     @Autowired
-    private ObjectsImportService importService;
-    
+    private ImportActionService importService;
 
+    @Autowired
+    private ValidatorService validatorService;
     
-    @SuppressWarnings("null")
     @PostMapping("human-being")
-    public ResponseEntity<?> humanCreate(@Valid @RequestBody HumanBeingDto humanBeingDto,
-                                BindingResult bindingResult, @AuthenticationPrincipal IsUserDetails userDetails) {
+    public ResponseEntity<?> humanCreate(@Valid @RequestBody HumanBeingDto humanBeingDto, @AuthenticationPrincipal IsUserDetails userDetails) {
         
-        if (bindingResult.hasErrors()) {
-            throw new ValidationException(bindingResult.getFieldError().getDefaultMessage());
-        }
+        validatorService.validateObejct(humanBeingDto);
         HumanBeing humanBeing = new HumanBeing(humanBeingDto, userDetails.getIsUser(), coordinatesService.get(humanBeingDto.getCoordinates()));
 
         if (humanBeingDto.getCar() != null) {
@@ -145,14 +140,10 @@ public class ObjectsController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
     
-    @SuppressWarnings("null")
     @PostMapping("coordinates")
-    public ResponseEntity<?> coordinatesCreate(@Valid @RequestBody CoordinatesDto coordinatesDto,
-                                                BindingResult bindingResult, @AuthenticationPrincipal IsUserDetails userDetails) {
+    public ResponseEntity<?> coordinatesCreate(@Valid @RequestBody CoordinatesDto coordinatesDto, @AuthenticationPrincipal IsUserDetails userDetails) throws CoordinatesAlreadyExistException {
         
-        if (bindingResult.hasErrors()) {
-            throw new ValidationException(bindingResult.getFieldError().getDefaultMessage());
-        }
+        validatorService.validateObejct(coordinatesDto);
 
         Coordinates coordinates = new Coordinates(coordinatesDto, userDetails.getIsUser());
         coordinates = coordinatesService.createCoordinates(coordinates);
@@ -217,12 +208,9 @@ public class ObjectsController {
 
     @SuppressWarnings("null")
     @PostMapping("car")
-    public ResponseEntity<?> coordinatesCreate(@Valid @RequestBody CarDto carDto,
-                                                BindingResult bindingResult, @AuthenticationPrincipal IsUserDetails userDetails) {
+    public ResponseEntity<?> coordinatesCreate(@Valid @RequestBody CarDto carDto, @AuthenticationPrincipal IsUserDetails userDetails) throws CarWithNameAlreadtExistException {
         
-        if (bindingResult.hasErrors()) {
-            throw new ValidationException(bindingResult.getFieldError().getDefaultMessage());
-        }
+        validatorService.validateObejct(carDto);
 
         Car car = new Car(carDto, userDetails.getIsUser());
         car = carService.createCar(car);
@@ -318,80 +306,88 @@ public class ObjectsController {
 
     @Transactional
     @PostMapping("human-being/import")
-    public ResponseEntity<?> jsonImportHumanBeings(@RequestParam String jsonObjects, @AuthenticationPrincipal IsUserDetails userDetails)
+    public ResponseEntity<?> jsonImportHumanBeings(@RequestBody String jsonObjects, @AuthenticationPrincipal IsUserDetails userDetails)
                                                                             throws Exception {
-        if (jsonObjects == null || jsonObjects == "") return ResponseEntity.badRequest().build();
+        if (jsonObjects == null || jsonObjects.equals("")) return ResponseEntity.badRequest().build();
 
         List<HumanBeingDto> humansDto = importService.importHumanBeings(jsonObjects);
+        List<HumanBeing> humans = new ArrayList<>();
 
         for (HumanBeingDto humanDto : humansDto) {
 
-            Coordinates coords = null;
-            Car car = null;
-            if (humanDto.getCarName() != null && humanDto.getCarCool() != null) {
-                CoordinatesDto coordDto = new CoordinatesDto();
-                coordDto.setX(humanDto.getCoordinatesX());
-                coordDto.setY(humanDto.getCoordinatesY());
-                coordDto.setAdminsCanEdit(true);
-                coords = new Coordinates(coordDto, userDetails.getIsUser());
-                coords = coordinatesService.createCoordinates(coords);
-                if (coords == null) throw new Exception();
-                humanDto.setCoordinates(coords.getId());
-            }
-            if (humanDto.getCoordinatesX() != null) {
-                CarDto carDto = new CarDto();
-                carDto.setName(humanDto.getCarName());
-                carDto.setCool(humanDto.getCarCool());
-                carDto.setAdminsCanEdit(true);
-                car = new Car(carDto, userDetails.getIsUser());
-                car = carService.createCar(car);
-                if (car == null) throw new Exception();
-                humanDto.setCar(car.getId());
-            } else {
-                throw new Exception();
-            }
+            Coordinates coords = coordinatesService.createCoordinates(humanDto.getCoordinatesX(), humanDto.getCoordinatesY(), userDetails.getIsUser());
+            Car car = carService.createCar(humanDto.getCarName(), humanDto.getCarCool(), userDetails.getIsUser());
+
+            validatorService.validateObejct(coords);
+            validatorService.validateObejct(car);
 
             HumanBeing human = new HumanBeing(humanDto, userDetails.getIsUser(), coords);
             if (car != null) {
                 human.setCar(car);
             }
-            humanBeingService.createHumanBeing(human);
+            human = humanBeingService.createHumanBeing(human);
+            humans.add(human);
         }
+
+        importService.createImporAction(humans, HumanBeing.class, userDetails.getIsUser());
+
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("human-being/import")
+    public ResponseEntity<?> humanBeingImportHistory(@AuthenticationPrincipal IsUserDetails userDetails) {
+        return ResponseEntity.ok(importService.getHumanBeingHistory(userDetails.getIsUser()).stream().map(el -> new ImportActionDto(el)).toList());
     }
 
     @Transactional
     @PostMapping("coordinates/import")
-    public ResponseEntity<?> jsonImportCoordinates(@RequestParam String jsonObjects, @AuthenticationPrincipal IsUserDetails userDetails)
+    public ResponseEntity<?> jsonImportCoordinates(@RequestBody String jsonObjects, @AuthenticationPrincipal IsUserDetails userDetails)
                                                                             throws Exception {
-        if (jsonObjects == null || jsonObjects == "") return ResponseEntity.badRequest().build();
+        if (jsonObjects == null || jsonObjects.equals("")) return ResponseEntity.badRequest().build();
 
         List<CoordinatesDto> coordsDtos = importService.importCoordinates(jsonObjects);
+        List<Coordinates> coordsList = new ArrayList<>();
 
         for (CoordinatesDto coordsDto : coordsDtos) {
             Coordinates coords = new Coordinates(coordsDto, userDetails.getIsUser());
-            coords.setAdminsCanEdit(true);
-            coordinatesService.createCoordinates(coords);
+            validatorService.validateObejct(coords);
+            coords = coordinatesService.createCoordinates(coords);
+            coordsList.add(coords);
         }
+
+        importService.createImporAction(coordsList, Coordinates.class, userDetails.getIsUser());
 
         return ResponseEntity.ok().build();
     }
 
-    @Transactional
+    @GetMapping("coordinates/import")
+    public ResponseEntity<?> coordinatesImportHistory(@AuthenticationPrincipal IsUserDetails userDetails) {
+        return ResponseEntity.ok(importService.getCoordinatesHistoty(userDetails.getIsUser()).stream().map(el -> new ImportActionDto(el)).toList());
+    }
+
     @PostMapping("car/import")
-    public ResponseEntity<?> jsonImportCar(@RequestParam String jsonObjects, @AuthenticationPrincipal IsUserDetails userDetails)
+    public ResponseEntity<?> jsonImportCar(@RequestBody String jsonObjects, @AuthenticationPrincipal IsUserDetails userDetails)
                                                                             throws Exception {
-        if (jsonObjects == null || jsonObjects == "") return ResponseEntity.badRequest().build();
+        if (jsonObjects == null || jsonObjects.equals("")) return ResponseEntity.badRequest().build();
 
         List<CarDto> carDtos = importService.importCars(jsonObjects);
+        List<Car> cars = new ArrayList<>();
 
         for (CarDto carDto : carDtos) {
+            validatorService.validateObejct(carDto);
             Car car = new Car(carDto, userDetails.getIsUser());
-            car.setAdminsCanEdit(true);
-            carService.createCar(car);
+            cars.add(car);
         }
 
+        carService.createAllCars(cars);
+        importService.createImporAction(cars, Car.class, userDetails.getIsUser());
+
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("car/import")
+    public ResponseEntity<?> carImportHistory(@AuthenticationPrincipal IsUserDetails userDetails) {
+        return ResponseEntity.ok(importService.getCarHistoty(userDetails.getIsUser()).stream().map(el -> new ImportActionDto(el)).toList());
     }
     
 }

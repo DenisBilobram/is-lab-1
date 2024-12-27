@@ -19,22 +19,21 @@ public class CarDto {
         this.objectEvents = car.getObjectEvents().stream().map(event -> new ObjectEventDto(event)).toList();
         this.adminsCanEdit = car.getAdminsCanEdit();
     }
-    
-    Long id;
 
-    @NotNull
+    private Long id;
+
+    @NotNull(message = "Поле 'name' не может быть пустым.")
     private String name;
 
-    @NotNull
+    @NotNull(message = "Поле 'cool' обязательно для заполнения.")
     private Boolean cool;
 
     private String isUser;
 
-    @NotNull
+    @NotNull(message = "Поле 'adminsCanEdit' обязательно для заполнения.")
     private Boolean adminsCanEdit;
 
     private List<ObjectEventDto> objectEvents;
 
-    ObjectOperationType type;
-
+    private ObjectOperationType type;
 }

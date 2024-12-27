@@ -6,6 +6,6 @@ import is.lab1.is_lab1.model.Car;
 
 public interface CarRepository extends JpaRepository<Car, Long> {
     
-    
+    boolean existsByName(String name);
 
 }

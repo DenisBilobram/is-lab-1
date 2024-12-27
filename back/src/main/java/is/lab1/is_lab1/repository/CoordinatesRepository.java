@@ -8,6 +8,6 @@ import is.lab1.is_lab1.model.Coordinates;
 @Repository
 public interface CoordinatesRepository extends JpaRepository<Coordinates, Long> {
     
-
+    boolean existsByXAndY(Double x, float y);
 
 }

@@ -11,11 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import is.lab1.is_lab1.controller.AuthController;
-import is.lab1.is_lab1.controller.exception.EmailNotFoundException;
-import is.lab1.is_lab1.controller.exception.InvalidResetTokenException;
-import is.lab1.is_lab1.controller.exception.RegistrationFailException;
-import is.lab1.is_lab1.controller.exception.RootsRequestAlreadyExistException;
-
+import is.lab1.is_lab1.controller.exception.IsException;
 
 @ControllerAdvice(assignableTypes = {AuthController.class})
 public class AuthControllerAdvice {
@@ -29,40 +25,13 @@ public class AuthControllerAdvice {
         return response;
     }
 
-    @ExceptionHandler(RegistrationFailException.class)
+    @ExceptionHandler(IsException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public Map<String, String> handleRegistrationFailException(RegistrationFailException exp) {
+    public Map<String, String> handleIsException(IsException exp) {
         Map<String, String> response = new HashMap<>();
         response.put("message", exp.getMessage());
         return response;
     }
 
-
-    @ExceptionHandler(RootsRequestAlreadyExistException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public Map<String, String> handleRootsRequestAlreadyExist(RootsRequestAlreadyExistException exp) {
-        Map<String, String> response = new HashMap<>();
-        response.put("message", exp.getMessage());
-        return response;
-    }
-
-    @ExceptionHandler(EmailNotFoundException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public Map<String, String> handleEmailNotFoundException(EmailNotFoundException exp) {
-        Map<String, String> response = new HashMap<>();
-        response.put("message", exp.getMessage());
-        return response;
-    }
-
-    @ExceptionHandler(InvalidResetTokenException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public Map<String, String> handleInvalidResetTokenException(InvalidResetTokenException exp) {
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Invalid reset token.");
-        return response;
-    }
 }

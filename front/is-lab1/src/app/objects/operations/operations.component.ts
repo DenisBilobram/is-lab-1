@@ -97,10 +97,7 @@ export class OperationsComponent {
     this.objectsSerive.findByNameContaining(substringValue).subscribe({
       next: (array: any[]) => {
         if (array.length != 0) {
-          array = array.map((el) => {
-            delete el.objectEvents;
-            return JSON.stringify(el, null, 2);
-          });
+          array = this.clearifyObjects(array);
           this.result = 'Array:<br>[<br>' + array.join('<br>') + '<br>]';
         } else {
           this.result = 'Array: []';
@@ -117,10 +114,7 @@ export class OperationsComponent {
     this.objectsSerive.findByWeaponTypeGreaterThan(weapon).subscribe({
       next: (array: any[]) => {
         if (array.length != 0) {
-          array = array.map((el) => {
-            delete el.objectEvents;
-            return JSON.stringify(el, null, 2);
-          });
+          array = this.clearifyObjects(array);
           this.result = 'Array:<br>[<br>' + array.join('<br>') + '<br>]';
         } else {
           this.result = 'Array: []';
@@ -147,6 +141,18 @@ export class OperationsComponent {
         this.result = 'Updated.';
       }
     })
+  }
+
+  clearifyObjects(array: any[]): any[] {
+    return array.map((el) => {
+      delete el.objectEvents;
+      delete el.type;
+      delete el.carName;
+      delete el.carCool;
+      delete el.coordinatesX;
+      delete el.coordinatesY;
+      return JSON.stringify(el, null, 2);
+    });
   }
 
   isValid(): boolean {

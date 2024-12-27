@@ -35,11 +35,11 @@ public class Coordinates implements Ownable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Min(value = -418, message = "Значение должно быть больше -419")
+    @Min(value = -418, message = "Value must be more than -419")
     @Column(nullable = false)
     private Double x; //Значение поля должно быть больше -419, Поле не может быть null
 
-    @Min(value = -452, message = "Значение должно быть больше -452")
+    @Min(value = -452, message = "Value must be more than -452")
     @Column(nullable = false)
     private float y; //Значение поля должно быть больше -453
 

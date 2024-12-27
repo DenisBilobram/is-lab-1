@@ -1,1 +1,67 @@
-<p>import works!</p>
+<div class="objects-import-container">
+    <div class="spacer"> </div>
+    <div class="objects-import">
+        <div class="import-window">
+            <h2>Choose JSON file</h2>
+            <input type="file" (change)="onFileSelected($event)" accept=".json" />
+            <button class="import-button" (click)="onUpload()">Upload</button>
+            <button class="import-button" routerLink="/objects">Back to Objects</button>
+        </div>
+        <div class="results-container" *ngIf="result">
+            <div class="results-header">Results: </div>
+            <div class="results-wrapper">
+              <div class="results">
+                <span>></span>
+                <div class="results" [innerHTML]="result"></div>
+              </div>
+            </div>
+        </div>
+        <div class="object-history">
+            @if (importHistory) {
+                <div class="objects-container">
+                    <div class="columns-container">
+                        <div class="object-columns" style="margin-top: 0px;">
+                            <div class="object-column">Type</div>
+                            <div class="object-column">Count</div>
+                            <div class="object-column">IDs</div>
+                            <div class="object-column">Creation Date</div>
+                            <div class="object-column">User</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="objects-container">
+                    @for (importAction of importHistory; track $index) {
+                        <div class="columns-container">
+                            <div class="object-columns">
+                                <div class="object-column">{{ importAction.importActionType }}</div>
+                                <div class="object-column">{{ importAction.count }}</div>
+                                <div class="object-column">
+                                    [
+                                    @if (entityType == 'human-being') {
+                                        @for (human of importAction.humanBeings; track $index) {
+                                            {{human.id}},
+                                        }
+                                    }
+                                    @else if (entityType == 'coordinates') {
+                                        @for (coordinates of importAction.coordinates; track $index) {
+                                            {{coordinates.id}},
+                                        }
+                                    }
+                                    @else if (entityType == 'car') {
+                                        @for (car of importAction.cars; track $index) {
+                                            {{car.id}},
+                                        }
+                                    }
+                                    ]
+                                </div>
+                                <div class="object-column">{{ importAction.creationDate }}</div>
+                                <div class="object-column">{{ importAction.isUser }}</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+    <div class="spacer"> </div>
+</div>

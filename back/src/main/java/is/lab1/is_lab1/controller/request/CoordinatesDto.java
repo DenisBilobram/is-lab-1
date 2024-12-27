@@ -20,24 +20,23 @@ public class CoordinatesDto {
         this.objectEvents = coords.getObjectEvents().stream().map(event -> new ObjectEventDto(event)).toList();
         this.adminsCanEdit = coords.getAdminsCanEdit();
     }
-    
-    Long id;
 
-    @NotNull
-    @Min(value = -418, message = "Значение должно быть больше -419")
-    private Double x;
+    private Long id;
 
-    @NotNull
-    @Min(value = -452, message = "Значение должно быть больше -452")
-    private float y;
+    @NotNull(message = "Field coordinates 'x' cannot be empty.")
+    @Min(value = -418, message = "Значение поля 'x' должно быть больше -419.")
+    private Double x; // Значение поля должно быть больше -419, Field не может быть null
+
+    @NotNull(message = "Field coordinates 'y' cannot be empty.")
+    @Min(value = -452, message = "Значение поля 'y' должно быть больше -452.")
+    private float y; // Значение поля должно быть больше -452
 
     private String isUser;
 
-    @NotNull
+    @NotNull(message = "Field 'adminsCanEdit' must be entered.")
     private Boolean adminsCanEdit;
 
     private List<ObjectEventDto> objectEvents;
 
-    ObjectOperationType type;
-
+    private ObjectOperationType type;
 }

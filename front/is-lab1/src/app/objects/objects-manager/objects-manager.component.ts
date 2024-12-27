@@ -26,7 +26,6 @@ export type EntityDataMap = {
   selector: 'app-objects-manager',
   standalone: true,
   imports: [
-    HeaderComponent,
     NgClass,
     ObjectLineComponent,
     RouterLink,

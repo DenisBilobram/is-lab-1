@@ -34,10 +34,10 @@ public class PasswordResetService {
 
     public PasswordResetToken validatePasswordResetToken(String token) throws InvalidResetTokenException {
         PasswordResetToken passToken = tokenRepository.findByToken(token);
-        if (passToken == null) throw new InvalidResetTokenException();
+        if (passToken == null) throw new InvalidResetTokenException("Invalid reset token.");
         if (passToken.getExpiryDate().isBefore(LocalDateTime.now())) {
             tokenRepository.delete(passToken);
-            throw new InvalidResetTokenException();
+            throw new InvalidResetTokenException("Invalid reset token.");
         }
         return passToken;
     }
